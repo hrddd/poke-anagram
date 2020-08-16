@@ -1,14 +1,6 @@
-import { createStore, combineReducers } from "redux";
-import { hogeReducer, HogeState } from "./states/hogeState";
+import { createStore } from "redux";
+import rootReducer from "./redux/modules/reducer";
 
-export type AppState = {
-  hoge: HogeState;
-};
-
-const store = createStore(
-  combineReducers<AppState>({
-    hoge: hogeReducer,
-  })
-);
+const store = createStore(rootReducer);
 
 export default store;

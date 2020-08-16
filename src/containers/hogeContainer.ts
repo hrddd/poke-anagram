@@ -1,11 +1,11 @@
 import { Action } from "typescript-fsa";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { AppState } from "../store";
 import { hogeActions } from "../actions/hogeActions";
 import { HogeComponent } from "../components/hogeComponent";
+import { selectHoge } from "../redux/modules/hoge";
 
-export interface HogeActions {
+export interface HogeHandlers {
   updateName: (v: string) => Action<string>;
   updateEmail: (v: string) => Action<string>;
 }
@@ -17,8 +17,4 @@ function mapDispatchToProps(dispatch: Dispatch<Action<string>>) {
   };
 }
 
-function mapStateToProps(appState: AppState) {
-  return Object.assign({}, appState.hoge);
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(HogeComponent);
+export default connect(selectHoge, mapDispatchToProps)(HogeComponent);
