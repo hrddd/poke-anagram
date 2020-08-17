@@ -1,10 +1,10 @@
 import * as React from "react";
-import { HogeState } from "../redux/modules/hoge";
+import { SelectedHoge } from "../redux/modules/hoge";
 import { HogeHandlers } from "../containers/hogeContainer";
 
 interface OwnProps {}
 
-type Props = OwnProps & HogeState & HogeHandlers;
+type Props = OwnProps & SelectedHoge & HogeHandlers;
 
 export const HogeComponent: React.SFC<Props> = (props) => {
   const { name, email } = props;

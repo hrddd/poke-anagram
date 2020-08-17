@@ -10,12 +10,7 @@ export const updateName = actionCreator<string>("ACTIONS_UPDATE_NAME");
 export const updateEmail = actionCreator<string>("ACTIONS_UPDATE_EMAIL");
 
 // state
-export interface HogeState {
-  name: string;
-  email: string;
-}
-
-const initialState: HogeState = {
+const initialState = {
   name: "",
   email: "",
 };
