@@ -1,8 +1,15 @@
 import { reducerWithInitialState } from "typescript-fsa-reducers";
 import { createSelector } from "reselect";
-import { hogeActions } from "../../actions/hogeActions";
 import { RootState } from "./reducer";
+import actionCreatorFactory from "typescript-fsa";
 
+// actions
+const actionCreator = actionCreatorFactory();
+
+export const updateName = actionCreator<string>("ACTIONS_UPDATE_NAME");
+export const updateEmail = actionCreator<string>("ACTIONS_UPDATE_EMAIL");
+
+// state
 export interface HogeState {
   name: string;
   email: string;
@@ -13,16 +20,18 @@ const initialState: HogeState = {
   email: "",
 };
 
-export const reducer = reducerWithInitialState(initialState)
-  .case(hogeActions.updateName, (state, name) => {
+// reducer
+const reducer = reducerWithInitialState(initialState)
+  .case(updateName, (state, name) => {
     return Object.assign({}, state, { name });
   })
-  .case(hogeActions.updateEmail, (state, email) => {
+  .case(updateEmail, (state, email) => {
     return Object.assign({}, state, { email });
   });
 
 export default reducer;
 
+// selector
 export const selectHoge = createSelector(
   (state: RootState) => state.ui.hoge,
   (hoge) => hoge

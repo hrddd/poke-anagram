@@ -1,9 +1,8 @@
 import { Action } from "typescript-fsa";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { hogeActions } from "../actions/hogeActions";
 import { HogeComponent } from "../components/hogeComponent";
-import { selectHoge } from "../redux/modules/hoge";
+import { updateName, updateEmail, selectHoge } from "../redux/modules/hoge";
 
 export interface HogeHandlers {
   updateName: (v: string) => Action<string>;
@@ -12,8 +11,8 @@ export interface HogeHandlers {
 
 function mapDispatchToProps(dispatch: Dispatch<Action<string>>) {
   return {
-    updateName: (v: string) => dispatch(hogeActions.updateName(v)),
-    updateEmail: (v: string) => dispatch(hogeActions.updateEmail(v)),
+    updateName: (v: string) => dispatch(updateName(v)),
+    updateEmail: (v: string) => dispatch(updateEmail(v)),
   };
 }
 
