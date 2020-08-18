@@ -1,5 +1,5 @@
 import * as React from "react";
-import HogeContainer from "../src/containers/hogeContainer";
+import HogeContainer from "./components/organisms/Hoge";
 
 class App extends React.Component {
   render() {

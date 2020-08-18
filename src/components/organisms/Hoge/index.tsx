@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
-import { HogeComponent } from '../components/hogeComponent';
-import { updateName, updateEmail, selectHoge } from "../redux/modules/hoge";
+import { HogeComponent } from './Hoge';
+import { updateName, updateEmail, selectHoge } from "../../../redux/modules/hoge";
 import { useCallback } from "react";
 import React from "react";
 
@@ -18,14 +18,12 @@ const Component: React.FC = () => {
   );
   const { name, email } = useSelector(selectHoge);
 
-  const props = {
-    name,
-    email,
-    handleNameChange,
-    handleEmailChange,
-  };
-
-  return (<HogeComponent {...props} />);
+  return (<HogeComponent
+    name={name}
+    email={email}
+    handleNameChange={handleNameChange}
+    handleEmailChange={handleEmailChange}
+  />);
 };
 
 export default Component;

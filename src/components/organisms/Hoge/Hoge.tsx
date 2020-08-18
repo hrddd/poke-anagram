@@ -1,5 +1,5 @@
 import * as React from "react";
-import { SelectedHoge } from "../redux/modules/hoge";
+import { SelectedHoge } from "../../../redux/modules/hoge";
 
 type Props = {
   handleNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
