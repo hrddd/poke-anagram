@@ -1,10 +1,10 @@
 import * as React from "react";
 import { SelectedHoge } from "../redux/modules/hoge";
-import { HogeHandlers } from "../containers/hogeContainer";
 
-interface OwnProps {}
-
-type Props = OwnProps & SelectedHoge & HogeHandlers;
+type Props = {
+  handleNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+  handleEmailChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+} & SelectedHoge;
 
 export const HogeComponent: React.SFC<Props> = (props) => {
   const { name, email } = props;
@@ -15,7 +15,7 @@ export const HogeComponent: React.SFC<Props> = (props) => {
           type="text"
           placeholder="name"
           value={name}
-          onChange={(e) => props.updateName(e.target.value)}
+          onChange={(e) => props.handleNameChange(e)}
         />
       </div>
       <div className="field">
@@ -23,7 +23,7 @@ export const HogeComponent: React.SFC<Props> = (props) => {
           type="email"
           placeholder="email"
           value={email}
-          onChange={(e) => props.updateEmail(e.target.value)}
+          onChange={(e) => props.handleEmailChange(e)}
         />
       </div>
     </div>
