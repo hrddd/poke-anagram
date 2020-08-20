@@ -16,15 +16,13 @@ const initialState = {
 };
 
 // reducer
-const reducer = reducerWithInitialState(initialState)
+export const hoge = reducerWithInitialState(initialState)
   .case(updateName, (state, name) => {
     return Object.assign({}, state, { name });
   })
   .case(updateEmail, (state, email) => {
     return Object.assign({}, state, { email });
   });
-
-export default reducer;
 
 // selector
 export const selectHoge = createSelector(

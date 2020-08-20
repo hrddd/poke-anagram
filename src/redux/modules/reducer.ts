@@ -1,10 +1,15 @@
 import { combineReducers } from "redux";
-import hoge from "./hoge";
+import { anagramPazzle } from './anagramPazzle';
+import { hoge } from './hoge';
+import { pokeData } from './pokeData';
 
 const rootReducer = combineReducers({
-  // resources: combineReducers({}),
+  resources: combineReducers({
+    pokeData
+  }),
   ui: combineReducers({
     hoge,
+    anagramPazzle
   }),
 });
 

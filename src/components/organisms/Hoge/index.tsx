@@ -9,12 +9,12 @@ const Component: React.FC = () => {
   const handleNameChange = useCallback(
     ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) =>
       dispatch(updateName(value)),
-    []
+    [dispatch]
   );
   const handleEmailChange = useCallback(
     ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) =>
       dispatch(updateEmail(value)),
-    []
+    [dispatch]
   );
   const { name, email } = useSelector(selectHoge);
 
