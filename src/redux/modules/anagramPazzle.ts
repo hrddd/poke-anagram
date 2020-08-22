@@ -26,10 +26,15 @@ const initialState = {
 // reducer
 export const anagramPazzle = reducerWithInitialState(initialState)
   .case(setAnagramPazzleBaseData, (state, pokeDex) => {
-    const dispPokeDex = [{
-      "id": 1,
-      "name": "フシギダネ"
-    }]
+    const dispPokeDex = pokeDex.map(({ id, name: {
+      japanese: name
+    } }) => {
+      return {
+        id,
+        name
+      }
+    });
+
     return {
       ...state,
       data: dispPokeDex
