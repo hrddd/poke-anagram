@@ -1,5 +1,5 @@
 import { combineReducers } from "redux";
-import { anagramPazzle } from './anagramPazzle';
+import { anagramPuzzle } from './anagramPuzzle';
 import { hoge } from './hoge';
 import { pokeData } from './pokeData';
 
@@ -9,7 +9,7 @@ const rootReducer = combineReducers({
   }),
   ui: combineReducers({
     hoge,
-    anagramPazzle
+    anagramPuzzle
   }),
 });
 

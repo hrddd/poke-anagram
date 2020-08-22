@@ -1,11 +1,11 @@
 import * as React from "react";
-import { SelectedAnagramPazzle } from '../../../redux/modules/anagramPazzle';
+import { SelectedAnagramPuzzle } from '../../../redux/modules/anagramPuzzle';
 
 type Props = {
-  anagramPazzle: SelectedAnagramPazzle
+  anagramPuzzle: SelectedAnagramPuzzle
 };
 
-const Questions = (props: { data: SelectedAnagramPazzle['data'] }) => {
+const Questions = (props: { data: SelectedAnagramPuzzle['data'] }) => {
   const { data } = props;
   return (<ul>
     {data.map((pokemon) => (
@@ -15,7 +15,7 @@ const Questions = (props: { data: SelectedAnagramPazzle['data'] }) => {
 };
 
 const Component: React.SFC<Props> = (props) => {
-  const { data, currentStep, maxStep } = props.anagramPazzle;
+  const { data, currentStep, maxStep } = props.anagramPuzzle;
   return (
     <>
       <div>{currentStep}/{maxStep}</div>
@@ -24,4 +24,4 @@ const Component: React.SFC<Props> = (props) => {
   );
 };
 
-export const AnagramPazzleComponent = React.memo(Component);
+export const AnagramPuzzleComponent = React.memo(Component);

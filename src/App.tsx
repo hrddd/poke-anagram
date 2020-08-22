@@ -1,13 +1,13 @@
 import * as React from "react";
 import HogeContainer from "./components/organisms/Hoge";
-import { AnagramPazzle } from "./components/organisms/AnagramPazzle";
+import { AnagramPuzzle } from "./components/organisms/AnagramPuzzle";
 
 class App extends React.Component {
   render() {
     return (
       <div className="App">
         <HogeContainer />
-        <AnagramPazzle />
+        <AnagramPuzzle />
       </div>
     );
   }

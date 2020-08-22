@@ -6,8 +6,8 @@ import actionCreatorFactory from "typescript-fsa";
 // actions
 const actionCreator = actionCreatorFactory();
 
-export const setAnagramPazzleBaseData = actionCreator<PokeDex>("SET_DATA");
-export const completeAnagramPazzle = actionCreator("COMPLETE");
+export const setAnagramPuzzleBaseData = actionCreator<PokeDex>("SET_DATA");
+export const completeAnagramPuzzle = actionCreator("COMPLETE");
 
 // state
 type DispPokeData = {
@@ -24,8 +24,8 @@ const initialState = {
 };
 
 // reducer
-export const anagramPazzle = reducerWithInitialState(initialState)
-  .case(setAnagramPazzleBaseData, (state, pokeDex) => {
+export const anagramPuzzle = reducerWithInitialState(initialState)
+  .case(setAnagramPuzzleBaseData, (state, pokeDex) => {
     const dispPokeDex = pokeDex.map(({ id, name: {
       japanese: name
     } }) => {
@@ -40,7 +40,7 @@ export const anagramPazzle = reducerWithInitialState(initialState)
       data: dispPokeDex
     };
   })
-  .case(completeAnagramPazzle, (state) => {
+  .case(completeAnagramPuzzle, (state) => {
     return {
       ...state,
       isComplete: true
@@ -48,13 +48,13 @@ export const anagramPazzle = reducerWithInitialState(initialState)
   });
 
 // selector
-export const selectAnagramPazzle = createSelector(
-  (state: RootState) => state.ui.anagramPazzle,
-  (anagramPazzle) => ({
-    ...anagramPazzle,
-    currentStep: anagramPazzle.currentIndex + 1,
-    maxStep: anagramPazzle.data.length,
+export const selectAnagramPuzzle = createSelector(
+  (state: RootState) => state.ui.anagramPuzzle,
+  (anagramPuzzle) => ({
+    ...anagramPuzzle,
+    currentStep: anagramPuzzle.currentIndex + 1,
+    maxStep: anagramPuzzle.data.length,
   })
 );
 
-export type SelectedAnagramPazzle = ReturnType<typeof selectAnagramPazzle>;
+export type SelectedAnagramPuzzle = ReturnType<typeof selectAnagramPuzzle>;
