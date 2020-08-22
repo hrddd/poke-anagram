@@ -9,7 +9,7 @@ const Questions = (props: { data: SelectedAnagramPazzle['data'] }) => {
   const { data } = props;
   return (<ul>
     {data.map((pokemon) => (
-      <li>{pokemon.name}</li>
+      <li key={pokemon.name}>{pokemon.name}</li>
     ))}
   </ul>)
 };
