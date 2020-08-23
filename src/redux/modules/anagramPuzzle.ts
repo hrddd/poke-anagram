@@ -4,7 +4,7 @@ import { RootState } from "./reducer";
 import actionCreatorFactory from "typescript-fsa";
 
 // actions
-const actionCreator = actionCreatorFactory();
+const actionCreator = actionCreatorFactory('anagramPuzzle');
 
 export const setAnagramPuzzleBaseData = actionCreator<PokeDex>("SET_DATA");
 export const completeAnagramPuzzle = actionCreator("COMPLETE");

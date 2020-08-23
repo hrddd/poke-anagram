@@ -4,7 +4,7 @@ import { RootState } from "./reducer";
 import actionCreatorFactory from "typescript-fsa";
 
 // actions
-const actionCreator = actionCreatorFactory();
+const actionCreator = actionCreatorFactory('pokeData');
 
 export const fetchPokeData = actionCreator.async<{}, PokeDex, {}>("FETCH");
 
