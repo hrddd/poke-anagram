@@ -3,21 +3,39 @@ import { createSelector } from "reselect";
 import { RootState } from "./reducer";
 import actionCreatorFactory from "typescript-fsa";
 
+// util
+const shuffle = <T>([...array]: T[]): T[] => {
+  for (let i = array.length - 1; i >= 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
 // actions
 const actionCreator = actionCreatorFactory('anagramPuzzle');
 
-export const setAnagramPuzzleBaseData = actionCreator<PokeDex>("SET_DATA");
+type SetPayload = {
+  data: PokeDex,
+  step: number
+};
+export const setAnagramPuzzleBaseData = actionCreator<SetPayload>("SET_DATA");
 export const completeAnagramPuzzle = actionCreator("COMPLETE");
 
 // state
-type DispPokeData = {
-  id: PokeData['id'],
-  name: PokeData['name']['japanese'],
+type BaseData = {
+  id: number,
+  name: string,
 }
-type DispPokeDex = DispPokeData[];
+
+type QuestionData = {
+  id: number,
+  name: string[],
+}
 
 const initialState = {
-  data: [] as DispPokeDex,
+  baseData: [] as BaseData[],
+  questionData: [] as QuestionData[],
   isLoading: false,
   isComplete: false,
   currentIndex: 0,
@@ -25,19 +43,27 @@ const initialState = {
 
 // reducer
 export const anagramPuzzle = reducerWithInitialState(initialState)
-  .case(setAnagramPuzzleBaseData, (state, pokeDex) => {
-    const dispPokeDex = pokeDex.map(({ id, name: {
+  .case(setAnagramPuzzleBaseData, (state, { data, step }) => {
+    const baseData = shuffle<BaseData>(data.map(({ id, name: {
       japanese: name
     } }) => {
       return {
         id,
         name
       }
+    })).slice(0, Math.min(step, data.length));
+
+    const questionData = baseData.map(({ id, name }) => {
+      return {
+        id,
+        name: shuffle<string>(name.split(''))
+      }
     });
 
     return {
       ...state,
-      data: dispPokeDex
+      baseData,
+      questionData
     };
   })
   .case(completeAnagramPuzzle, (state) => {
@@ -53,7 +79,7 @@ export const selectAnagramPuzzle = createSelector(
   (anagramPuzzle) => ({
     ...anagramPuzzle,
     currentStep: anagramPuzzle.currentIndex + 1,
-    maxStep: anagramPuzzle.data.length,
+    maxStep: anagramPuzzle.baseData.length,
   })
 );
 

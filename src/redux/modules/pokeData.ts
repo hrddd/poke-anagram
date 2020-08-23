@@ -10,7 +10,7 @@ export const fetchPokeData = actionCreator.async<string, PokeDex, string>("FETCH
 
 // state
 const initialState = {
-  data: [] as PokeDex,
+  allPokeData: [] as PokeDex,
   isLoading: false,
 };
 
@@ -20,9 +20,9 @@ export const pokeData = reducerWithInitialState(initialState)
     ...state,
     isLoading: true,
   }))
-  .case(fetchPokeData.done, (state, { result: data }) => ({
+  .case(fetchPokeData.done, (state, { result: allPokeData }) => ({
     ...state,
-    data,
+    allPokeData,
     isLoading: false,
   }))
   .case(fetchPokeData.failed, (state) => ({
@@ -33,7 +33,10 @@ export const pokeData = reducerWithInitialState(initialState)
 // selector
 export const selectPokeData = createSelector(
   (state: RootState) => state.resources.pokeData,
-  (pokeData) => pokeData
+  (pokeData) => ({
+    ...pokeData,
+    firstPokeData: pokeData.allPokeData.slice(0, 151)
+  })
 );
 
 export type SelectedPokeData = ReturnType<typeof selectPokeData>;

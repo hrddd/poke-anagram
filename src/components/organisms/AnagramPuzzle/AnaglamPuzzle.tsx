@@ -5,21 +5,25 @@ type Props = {
   anagramPuzzle: SelectedAnagramPuzzle
 };
 
-const Questions = (props: { data: SelectedAnagramPuzzle['data'] }) => {
+const Questions = (props: { data: SelectedAnagramPuzzle['questionData'] }) => {
   const { data } = props;
   return (<ul>
-    {data.map((pokemon) => (
-      <li key={pokemon.name}>{pokemon.name}</li>
+    {data.map((question) => (
+      <li key={question.id}>
+        {question.name.map((char, idx) => {
+          return (<span key={`${question.id}_${char}_${idx}`} style={{ border: '1px solid' }}>{char}</span>)
+        })}
+      </li>
     ))}
   </ul>)
 };
 
 const Component: React.SFC<Props> = (props) => {
-  const { data, currentStep, maxStep } = props.anagramPuzzle;
+  const { questionData, currentStep, maxStep } = props.anagramPuzzle;
   return (
     <>
       <div>{currentStep}/{maxStep}</div>
-      {data.length > 0 && (<Questions data={data} />)}
+      {questionData.length > 0 && (<Questions data={questionData} />)}
     </>
   );
 };

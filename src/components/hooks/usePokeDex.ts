@@ -5,7 +5,7 @@ import { loadPokeDex, getErrorMessage } from '../../apis/index';
 
 export const usePokeDex = () => {
   const dispatch = useDispatch();
-  const { data: pokeData } = useSelector(selectPokeData);
+  const { allPokeData, firstPokeData } = useSelector(selectPokeData);
   const fetchData = useCallback(async () => {
     const params = 'Please Give Me Pokemons...';
     dispatch(fetchPokeData.started(params));
@@ -23,5 +23,8 @@ export const usePokeDex = () => {
     }
   }, [dispatch]);
 
-  return [pokeData, fetchData] as const;
+  return [{
+    allPokeData,
+    firstPokeData,
+  }, fetchData] as const;
 };

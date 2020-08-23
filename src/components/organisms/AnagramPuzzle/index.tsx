@@ -14,8 +14,11 @@ const Component: React.FC = () => {
   }, [fetchData])
 
   useEffect(() => {
-    dispatch(setAnagramPuzzleBaseData(pokeData));
-  }, [dispatch, pokeData])
+    dispatch(setAnagramPuzzleBaseData({
+      data: pokeData.firstPokeData,
+      step: 10
+    }));
+  }, [dispatch, pokeData.firstPokeData])
 
   return (<AnagramPuzzleComponent
     anagramPuzzle={anagramPuzzle}
