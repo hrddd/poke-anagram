@@ -6,7 +6,7 @@ import actionCreatorFactory from "typescript-fsa";
 // actions
 const actionCreator = actionCreatorFactory('pokeData');
 
-export const fetchPokeData = actionCreator.async<{}, PokeDex, {}>("FETCH");
+export const fetchPokeData = actionCreator.async<string, PokeDex, string>("FETCH");
 
 // state
 const initialState = {
