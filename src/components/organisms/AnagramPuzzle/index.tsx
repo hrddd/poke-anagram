@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { AnagramPuzzleComponent } from './AnaglamPuzzle';
 import { selectAnagramPuzzle, setAnagramPuzzleBaseData } from '../../../redux/modules/anagramPuzzle';
 import { usePokeDex } from "../../hooks/usePokeDex";
+import { useCallback } from 'react';
 
 const Component: React.FC = () => {
   const dispatch = useDispatch();
@@ -20,8 +21,13 @@ const Component: React.FC = () => {
     }));
   }, [dispatch, pokeData.firstPokeData])
 
+  const handleOnClick = useCallback((e: React.MouseEvent) => {
+    console.log(e.target)
+  }, [])
+
   return (<AnagramPuzzleComponent
     anagramPuzzle={anagramPuzzle}
+    handleOnClick={handleOnClick}
   />);
 };
 

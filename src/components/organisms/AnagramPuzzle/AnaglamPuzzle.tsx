@@ -2,16 +2,21 @@ import * as React from "react";
 import { SelectedAnagramPuzzle } from '../../../redux/modules/anagramPuzzle';
 
 type Props = {
-  anagramPuzzle: SelectedAnagramPuzzle
+  anagramPuzzle: SelectedAnagramPuzzle,
+  handleOnClick: (e: React.MouseEvent<HTMLButtonElement>) => void
 };
 
-const Questions = (props: { data: SelectedAnagramPuzzle['questionData'] }) => {
-  const { data } = props;
+const Questions = (props: { data: SelectedAnagramPuzzle['questionData'], handleOnClick: (e: React.MouseEvent<HTMLButtonElement>) => void }) => {
+  const { data, handleOnClick } = props;
   return (<ul>
     {data.map((question) => (
       <li key={question.id}>
         {question.name.map((char, idx) => {
-          return (<span key={`${question.id}_${char}_${idx}`} style={{ border: '1px solid' }}>{char}</span>)
+          return (<button
+            key={`${question.id}_${char}_${idx}`}
+            style={{ border: '1px solid', height: '40px', width: '40px' }}
+            onClick={handleOnClick}>{char}</button>
+          );
         })}
       </li>
     ))}
@@ -19,11 +24,13 @@ const Questions = (props: { data: SelectedAnagramPuzzle['questionData'] }) => {
 };
 
 const Component: React.SFC<Props> = (props) => {
-  const { questionData, currentStep, maxStep } = props.anagramPuzzle;
+  const { anagramPuzzle: { questionData, currentStep, maxStep }, handleOnClick } = props;
   return (
     <>
       <div>{currentStep}/{maxStep}</div>
-      {questionData.length > 0 && (<Questions data={questionData} />)}
+      {questionData.length > 0 && (<Questions
+        data={questionData} handleOnClick={handleOnClick}
+      />)}
     </>
   );
 };
