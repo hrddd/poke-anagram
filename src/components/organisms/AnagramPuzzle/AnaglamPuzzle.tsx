@@ -11,10 +11,12 @@ const Questions = (props: { data: SelectedAnagramPuzzle['questionData'], handleO
   return (<ul>
     {data.map((question) => (
       <li key={question.id}>
-        {question.name.map((char, idx) => {
+        {question.name.map(({ id, char, isSelected }) => {
           return (<button
-            key={`${question.id}_${char}_${idx}`}
-            style={{ border: '1px solid', height: '40px', width: '40px' }}
+            key={id}
+            data-char-id={id}
+            data-question-id={question.id}
+            style={{ border: '1px solid', height: '40px', width: '40px', background: isSelected ? 'red' : 'gray' }}
             onClick={handleOnClick}>{char}</button>
           );
         })}

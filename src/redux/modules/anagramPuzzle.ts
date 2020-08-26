@@ -21,6 +21,7 @@ type SetPayload = {
 };
 export const setAnagramPuzzleBaseData = actionCreator<SetPayload>("SET_DATA");
 export const completeAnagramPuzzle = actionCreator("COMPLETE");
+export const selectChar = actionCreator<Char['id']>("SELECT_CHAR");
 
 // state
 type BaseData = {
@@ -28,9 +29,16 @@ type BaseData = {
   name: string,
 }
 
+type Char = {
+  id: string,
+  char: string,
+  isSelected: boolean,
+  order: number
+}
+
 type QuestionData = {
   id: number,
-  name: string[],
+  name: Char[],
 }
 
 const initialState = {
@@ -56,7 +64,12 @@ export const anagramPuzzle = reducerWithInitialState(initialState)
     const questionData = baseData.map(({ id, name }) => {
       return {
         id,
-        name: shuffle<string>(name.split(''))
+        name: shuffle<string>(name.split('')).map((char, idx) => ({
+          id: `${id}_${char}_${idx}`,
+          char: char,
+          isSelected: false,
+          order: idx
+        }))
       }
     });
 
@@ -64,6 +77,12 @@ export const anagramPuzzle = reducerWithInitialState(initialState)
       ...state,
       baseData,
       questionData
+    };
+  })
+  .case(selectChar, (state) => {
+    return {
+      ...state,
+      isComplete: true
     };
   })
   .case(completeAnagramPuzzle, (state) => {
