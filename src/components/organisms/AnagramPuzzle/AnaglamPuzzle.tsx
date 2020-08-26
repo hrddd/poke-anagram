@@ -1,24 +1,32 @@
 import * as React from "react";
-import { SelectedAnagramPuzzle } from '../../../redux/modules/anagramPuzzle';
+import { SelectedAnagramPuzzle, SelectCharPayload } from '../../../redux/modules/anagramPuzzle';
 
 type Props = {
   anagramPuzzle: SelectedAnagramPuzzle,
-  handleOnClick: (e: React.MouseEvent<HTMLButtonElement>) => void
+  handleOnClick: (payload: SelectCharPayload) => void
 };
 
-const Questions = (props: { data: SelectedAnagramPuzzle['questionData'], handleOnClick: (e: React.MouseEvent<HTMLButtonElement>) => void }) => {
+const Char = (props: { char: string, isSelected: boolean, handleOnClick: (e: React.MouseEvent<HTMLButtonElement>) => void }) => {
+  const { isSelected, char, handleOnClick } = props;
+  return (<button
+    style={{ border: '1px solid', height: '40px', width: '40px', background: isSelected ? 'red' : 'gray' }}
+    onClick={handleOnClick}>{char}</button>
+  );
+};
+
+const Questions = (props: { data: SelectedAnagramPuzzle['questionData'], handleOnClick: (payload: SelectCharPayload) => void }) => {
   const { data, handleOnClick } = props;
   return (<ul>
     {data.map((question) => (
       <li key={question.id}>
         {question.name.map(({ id, char, isSelected }) => {
-          return (<button
-            key={id}
-            data-char-id={id}
-            data-question-id={question.id}
-            style={{ border: '1px solid', height: '40px', width: '40px', background: isSelected ? 'red' : 'gray' }}
-            onClick={handleOnClick}>{char}</button>
-          );
+          const handleOnClickChar = () => {
+            handleOnClick({
+              charId: id,
+              questionId: question.id
+            });
+          }
+          return (<Char key={id} char={char} isSelected={isSelected} handleOnClick={handleOnClickChar} />);
         })}
       </li>
     ))}

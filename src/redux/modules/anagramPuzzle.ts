@@ -19,9 +19,13 @@ type SetPayload = {
   data: PokeDex,
   step: number
 };
+export type SelectCharPayload = {
+  questionId: QuestionData['id'],
+  charId: Char['id']
+};
 export const setAnagramPuzzleBaseData = actionCreator<SetPayload>("SET_DATA");
 export const completeAnagramPuzzle = actionCreator("COMPLETE");
-export const selectChar = actionCreator<Char['id']>("SELECT_CHAR");
+export const selectChar = actionCreator<SelectCharPayload>("SELECT_CHAR");
 
 // state
 type BaseData = {
@@ -79,10 +83,24 @@ export const anagramPuzzle = reducerWithInitialState(initialState)
       questionData
     };
   })
-  .case(selectChar, (state) => {
+  .case(selectChar, (state, { questionId, charId }) => {
+    // 該当の設問の文字だけ更新
+    const questionData = [...state.questionData].map((question) => {
+      return question.id === questionId ? {
+        id: question.id,
+        name: question.name.map((char) => {
+          return char.id === charId ? {
+            id: char.id,
+            char: char.char,
+            isSelected: !char.isSelected,
+            order: char.order
+          } : char
+        })
+      } : question;
+    })
     return {
       ...state,
-      isComplete: true
+      questionData
     };
   })
   .case(completeAnagramPuzzle, (state) => {
