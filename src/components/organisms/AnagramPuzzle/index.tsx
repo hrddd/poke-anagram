@@ -21,13 +21,13 @@ const Component: React.FC = () => {
     }));
   }, [dispatch, firstPokeData])
 
-  const handleOnClick = useCallback((payload: SelectCharPayload) => {
+  const handleOnClickFactory = useCallback((payload: SelectCharPayload) => (e: React.MouseEvent<HTMLButtonElement>) => {
     dispatch(selectChar(payload))
   }, [dispatch])
 
   return (<AnagramPuzzleComponent
     anagramPuzzle={anagramPuzzle}
-    handleOnClick={handleOnClick}
+    handleOnClickFactory={handleOnClickFactory}
   />);
 };
 

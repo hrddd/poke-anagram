@@ -3,7 +3,7 @@ import { SelectedAnagramPuzzle, SelectCharPayload } from '../../../redux/modules
 
 type Props = {
   anagramPuzzle: SelectedAnagramPuzzle,
-  handleOnClick: (payload: SelectCharPayload) => void
+  handleOnClickFactory: (payload: SelectCharPayload) => (e: React.MouseEvent<HTMLButtonElement>) => void
 };
 
 const Char = (props: { char: string, isSelected: boolean, handleOnClick: (e: React.MouseEvent<HTMLButtonElement>) => void }) => {
@@ -14,19 +14,19 @@ const Char = (props: { char: string, isSelected: boolean, handleOnClick: (e: Rea
   );
 };
 
-const Questions = (props: { data: SelectedAnagramPuzzle['questionData'], handleOnClick: (payload: SelectCharPayload) => void }) => {
-  const { data, handleOnClick } = props;
+const Questions = (props: { data: SelectedAnagramPuzzle['questionData'], handleOnClickFactory: (payload: SelectCharPayload) => (e: React.MouseEvent<HTMLButtonElement>) => void }) => {
+  const { data, handleOnClickFactory } = props;
   return (<ul>
     {data.map((question) => (
       <li key={question.id}>
         {question.name.map(({ id, char, isSelected }) => {
-          const handleOnClickChar = () => {
-            handleOnClick({
-              charId: id,
-              questionId: question.id
-            });
-          }
-          return (<Char key={id} char={char} isSelected={isSelected} handleOnClick={handleOnClickChar} />);
+          // TODO: handleOnClickが異なる関数と解釈されるため、無駄な再描画がありそう？確認する
+          // TODO: questionId, charIdは段階に応じて一個づつ渡した方が・・・？状況に合わす
+          // TODO: ただやっぱりコレmoleculesでやる動作ではない気がするんだよなあ、、、パーツ、organismsのパーツってことで、、、でもいいのかな
+          return (<Char key={id} char={char} isSelected={isSelected} handleOnClick={handleOnClickFactory({
+            charId: id,
+            questionId: question.id
+          })} />);
         })}
       </li>
     ))}
@@ -34,12 +34,12 @@ const Questions = (props: { data: SelectedAnagramPuzzle['questionData'], handleO
 };
 
 const Component: React.SFC<Props> = (props) => {
-  const { anagramPuzzle: { questionData, currentStep, maxStep }, handleOnClick } = props;
+  const { anagramPuzzle: { questionData, currentStep, maxStep }, handleOnClickFactory } = props;
   return (
     <>
       <div>{currentStep}/{maxStep}</div>
       {questionData.length > 0 && (<Questions
-        data={questionData} handleOnClick={handleOnClick}
+        data={questionData} handleOnClickFactory={handleOnClickFactory}
       />)}
     </>
   );
