@@ -6,7 +6,6 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
-    "@types/jest": "^24.0.0",
     "@types/node": "^12.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -21,7 +20,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "jest",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -40,9 +39,12 @@
     ]
   },
   "devDependencies": {
+    "@types/jest": "^24.9.1",
     "@types/react": "^16.9.46",
     "@types/react-dom": "^16.9.8",
     "@types/react-redux": "^7.1.9",
-    "reselect": "^4.0.0"
+    "jest": "^26.4.2",
+    "reselect": "^4.0.0",
+    "ts-jest": "^26.3.0"
   }
 }
