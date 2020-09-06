@@ -1,5 +1,5 @@
 import { combineReducers } from "redux";
-import { anagramPuzzle } from './anagramPuzzle';
+import { reducer as anagramPuzzle } from './anagramPuzzle';
 import { hoge } from './hoge';
 import { pokeData } from './pokeData';
 
