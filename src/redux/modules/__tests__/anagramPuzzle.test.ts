@@ -1,42 +1,35 @@
-import { reducer, setBaseData, State, selectAnagramPuzzle } from '../anagramPuzzle';
+import { reducer, setBaseData, State, selectAnagramPuzzle, createQuestion } from '../anagramPuzzle';
 import { configureStore } from './configureMockStore';
+
+const dummyData = [{
+  id: '1',
+  name: 'フシギダネ'
+}, {
+  id: '20',
+  name: 'クチート'
+}, {
+  id: '300',
+  name: 'ポリゴン'
+}];
 
 describe('anagramPuzzle reducer', () => {
   it('初期State', () => {
     const result = reducer(undefined, { type: 'hoge' });
     expect(result).toEqual({
-      baseData: [],
+      answerData: [],
       questionData: [],
       isComplete: false,
       currentIndex: 0,
     })
   })
-  it('setBaseData: 問題のベースデータの設定', () => {
+  it('createQuestion: 問題を作成', () => {
     // データの乗ったActionが発行され
-    const action = setBaseData([{
-      id: '1',
-      name: 'aaa'
-    }]);
+    const action = createQuestion(dummyData);
     // reducerに渡ったら
     const result = reducer(undefined, action);
-    // 問題のベースデータがセットされる
-    expect(result).toEqual({
-      baseData: [{
-        id: '1',
-        name: 'aaa'
-      }],
-      questionData: [],
-      isComplete: false,
-      currentIndex: 0,
-    })
-    // it('createQuestion: 問題を作成', () => {
-    //   // 個数の乗ったActionが発行され
-    //   const action = createQuestion(5);
-    //   // reducerに渡ったら
-    //   const result = reducer(undefined, action);
-    //   // 問題の個数が決まる
-    //   expect(result.baseData.length).toBe(5);
-    // })
+    // 答えと問題がセットされる
+    expect(result.answerData).toEqual(dummyData);
+    expect(result.questionData.length).toEqual(result.answerData.length);
   })
 })
 describe('anagramPuzzle selector', () => {
@@ -47,7 +40,7 @@ describe('anagramPuzzle selector', () => {
     const result: State = selectAnagramPuzzle(store.getState());
     // データを返す
     expect(result).toEqual({
-      baseData: [],
+      answerData: [],
       questionData: [],
       isComplete: false,
       currentIndex: 0,

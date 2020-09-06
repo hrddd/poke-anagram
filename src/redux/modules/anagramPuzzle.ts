@@ -15,17 +15,14 @@ const shuffle = <T>([...array]: T[]): T[] => {
 // actions
 const actionCreator = actionCreatorFactory('anagramPuzzle');
 
-// export type SelectCharPayload = {
-//   questionId: QuestionData['id'],
-//   charId: Char['id']
-// };
-export const setBaseData = actionCreator<BaseData[]>("SET_BASE_DATA");
+export const createQuestion = actionCreator<AnswerData[]>("CREATE_QUESTION");
+// export const shuffleAnswerData = actionCreator("SHUFFLE_BASE_DATA");
 // export const createQuestion = actionCreator<number>("PICK_BASE_DATA");
 // export const completeAnagramPuzzle = actionCreator("COMPLETE");
 // export const selectChar = actionCreator<SelectCharPayload>("SELECT_CHAR");
 
 // state
-type BaseData = {
+type AnswerData = {
   id: string,
   name: string,
 }
@@ -38,12 +35,12 @@ type Char = {
 }
 
 type QuestionData = {
-  id: number,
+  id: string,
   name: Char[],
 }
 
 const initialState = {
-  baseData: [] as BaseData[],
+  answerData: [] as AnswerData[],
   questionData: [] as QuestionData[],
   isComplete: false,
   currentIndex: 0,
@@ -51,22 +48,33 @@ const initialState = {
 
 // reducer
 export const reducer = reducerWithInitialState(initialState)
-  .case(setBaseData, (state, payload) => {
-
+  .case(createQuestion, (state, payload) => {
+    const questionData = payload.map(({ id, name }) => {
+      return {
+        id,
+        name: shuffle<string>(name.split('')).map((char, idx) => ({
+          id: `${id}_${char}_${idx}`,
+          char: char,
+          isSelected: false,
+          order: idx
+        }))
+      }
+    });
     return {
       ...state,
-      baseData: payload
+      answerData: payload,
+      questionData
     }
   })
-// .case(pickBaseData, (state, step) => {
-//   const pickedData = state.baseData.slice(0, Math.min(step, state.baseData.length));
+// .case(pickAnswerData, (state, step) => {
+//   const pickedData = state.AnswerData.slice(0, Math.min(step, state.AnswerData.length));
 //   return {
 //     ...state,
-//     baseData: payload
+//     AnswerData: payload
 //   }
 // })
-// .case(setAnagramPuzzleBaseData, (state, { data, step }) => {
-//   const baseData = shuffle<BaseData>(data.map(({ id, name: {
+// .case(setAnagramPuzzleAnswerData, (state, { data, step }) => {
+//   const AnswerData = shuffle<AnswerData>(data.map(({ id, name: {
 //     japanese: name
 //   } }) => {
 //     return {
@@ -75,7 +83,7 @@ export const reducer = reducerWithInitialState(initialState)
 //     }
 //   })).slice(0, Math.min(step, data.length));
 
-//   const questionData = baseData.map(({ id, name }) => {
+//   const questionData = AnswerData.map(({ id, name }) => {
 //     return {
 //       id,
 //       name: shuffle<string>(name.split('')).map((char, idx) => ({
@@ -89,7 +97,7 @@ export const reducer = reducerWithInitialState(initialState)
 
 //   return {
 //     ...state,
-//     baseData,
+//     AnswerData,
 //     questionData
 //   };
 // })
@@ -126,7 +134,7 @@ export const selectAnagramPuzzle = createSelector(
   (anagramPuzzle) => ({
     ...anagramPuzzle,
     currentStep: anagramPuzzle.currentIndex + 1,
-    maxStep: anagramPuzzle.baseData.length,
+    maxStep: anagramPuzzle.answerData.length,
   })
 );
 
