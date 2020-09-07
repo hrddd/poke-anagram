@@ -16,10 +16,10 @@ const shuffle = <T>([...array]: T[]): T[] => {
 const actionCreator = actionCreatorFactory('anagramPuzzle');
 
 export const createQuestion = actionCreator<AnswerData[]>("CREATE_QUESTION");
+export const selectChar = actionCreator<string>("SELECT_CHAR");
 // export const shuffleAnswerData = actionCreator("SHUFFLE_BASE_DATA");
 // export const createQuestion = actionCreator<number>("PICK_BASE_DATA");
 // export const completeAnagramPuzzle = actionCreator("COMPLETE");
-// export const selectChar = actionCreator<SelectCharPayload>("SELECT_CHAR");
 
 // state
 type AnswerData = {
@@ -34,7 +34,7 @@ type Char = {
   order: number
 }
 
-type QuestionData = {
+export type QuestionData = {
   id: string,
   name: Char[],
 }
@@ -63,6 +63,26 @@ export const reducer = reducerWithInitialState(initialState)
     return {
       ...state,
       answerData: payload,
+      questionData
+    }
+  })
+  .case(selectChar, (state, payload) => {
+    const selectedId = payload;
+    const questionData = [...state.questionData].map((question) => {
+      // 設問中の選択されたidのcharのみ変更
+      const hasSelectedChar = question.name.some((char) => char.id === selectedId)
+      return hasSelectedChar ? {
+        id: question.id,
+        name: question.name.map((char) => {
+          return char.id === selectedId ? {
+            ...char,
+            isSelected: !char.isSelected
+          } : char
+        })
+      } : question;
+    })
+    return {
+      ...state,
       questionData
     }
   })

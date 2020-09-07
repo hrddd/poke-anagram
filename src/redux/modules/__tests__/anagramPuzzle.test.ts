@@ -1,4 +1,4 @@
-import { reducer, setBaseData, State, selectAnagramPuzzle, createQuestion } from '../anagramPuzzle';
+import { reducer, State, selectAnagramPuzzle, createQuestion, selectChar, QuestionData } from '../anagramPuzzle';
 import { configureStore } from './configureMockStore';
 
 const dummyData = [{
@@ -30,6 +30,22 @@ describe('anagramPuzzle reducer', () => {
     // 答えと問題がセットされる
     expect(result.answerData).toEqual(dummyData);
     expect(result.questionData.length).toEqual(result.answerData.length);
+  })
+  it('selectChar: 文字を選択', () => {
+    // 問題を作成し
+    const action = createQuestion(dummyData);
+    const result = reducer(undefined, action);
+    // 文字を選択すると
+    const targetId = result.questionData[0].name[0].id;
+    const selectCharAction = selectChar(targetId);
+    const selectCharResult = reducer(result, selectCharAction);
+    // 問題の文字が選択状態に
+    const selectedChar = selectCharResult.questionData.filter((question) => {
+      return question.name.filter((char) => {
+        return char.isSelected;
+      });
+    })[0].name[0];
+    expect(selectedChar?.id).toBe(targetId);
   })
 })
 describe('anagramPuzzle selector', () => {
