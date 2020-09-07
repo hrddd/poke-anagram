@@ -17,7 +17,7 @@ const actionCreator = actionCreatorFactory('anagramPuzzle');
 
 export const createQuestion = actionCreator<AnswerData[]>("CREATE_QUESTION");
 export const selectChar = actionCreator<string>("SELECT_CHAR");
-// export const shuffleAnswerData = actionCreator("SHUFFLE_BASE_DATA");
+export const deselectChar = actionCreator<string>("DESELECT_CHAR");
 // export const createQuestion = actionCreator<number>("PICK_BASE_DATA");
 // export const completeAnagramPuzzle = actionCreator("COMPLETE");
 
@@ -34,9 +34,12 @@ type Char = {
   order: number
 }
 
-export type QuestionData = {
+type QuestionData = {
   id: string,
-  name: Char[],
+  // 正規化された文字の分割データ
+  name: {
+    [key: string]: Char
+  },
 }
 
 const initialState = {
@@ -50,14 +53,19 @@ const initialState = {
 export const reducer = reducerWithInitialState(initialState)
   .case(createQuestion, (state, payload) => {
     const questionData = payload.map(({ id, name }) => {
+      const shuffledNames = shuffle<string>(name.split(''));
       return {
         id,
-        name: shuffle<string>(name.split('')).map((char, idx) => ({
-          id: `${id}_${char}_${idx}`,
-          char: char,
-          isSelected: false,
-          order: idx
-        }))
+        name: shuffledNames.reduce((memo: { [key: string]: Char }, char, idx) => {
+          const charId = `${id}_${char}_${idx}`;
+          memo[charId] = {
+            id: charId,
+            char: char,
+            isSelected: false,
+            order: idx
+          }
+          return memo
+        }, {})
       }
     });
     return {
@@ -70,15 +78,39 @@ export const reducer = reducerWithInitialState(initialState)
     const selectedId = payload;
     const questionData = [...state.questionData].map((question) => {
       // 設問中の選択されたidのcharのみ変更
-      const hasSelectedChar = question.name.some((char) => char.id === selectedId)
+      const hasSelectedChar = Object.keys(question.name).some((charId) => charId === selectedId)
+      const selectedChar = question.name[selectedId];
       return hasSelectedChar ? {
         id: question.id,
-        name: question.name.map((char) => {
-          return char.id === selectedId ? {
-            ...char,
-            isSelected: !char.isSelected
-          } : char
-        })
+        name: {
+          ...question.name,
+          [selectedId]: {
+            ...selectedChar,
+            isSelected: true
+          }
+        }
+      } : question;
+    })
+    return {
+      ...state,
+      questionData
+    }
+  })
+  .case(deselectChar, (state, payload) => {
+    const selectedId = payload;
+    const questionData = [...state.questionData].map((question) => {
+      // 設問中の選択されたidのcharのみ変更
+      const hasSelectedChar = Object.keys(question.name).some((charId) => charId === selectedId)
+      const selectedChar = question.name[selectedId];
+      return hasSelectedChar ? {
+        id: question.id,
+        name: {
+          ...question.name,
+          [selectedId]: {
+            ...selectedChar,
+            isSelected: false
+          }
+        }
       } : question;
     })
     return {

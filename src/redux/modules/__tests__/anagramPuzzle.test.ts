@@ -1,7 +1,7 @@
-import { reducer, State, selectAnagramPuzzle, createQuestion, selectChar, QuestionData } from '../anagramPuzzle';
+import { reducer, State, selectAnagramPuzzle, createQuestion, selectChar, deselectChar } from '../anagramPuzzle';
 import { configureStore } from './configureMockStore';
 
-const dummyData = [{
+const dummyAnswerData = [{
   id: '1',
   name: 'フシギダネ'
 }, {
@@ -24,28 +24,30 @@ describe('anagramPuzzle reducer', () => {
   })
   it('createQuestion: 問題を作成', () => {
     // データの乗ったActionが発行され
-    const action = createQuestion(dummyData);
+    const action = createQuestion(dummyAnswerData);
     // reducerに渡ったら
     const result = reducer(undefined, action);
     // 答えと問題がセットされる
-    expect(result.answerData).toEqual(dummyData);
+    expect(result.answerData).toEqual(dummyAnswerData);
     expect(result.questionData.length).toEqual(result.answerData.length);
   })
-  it('selectChar: 文字を選択', () => {
+  it('selectChar: 文字を選択, deselectChar: 文字選択を解除', () => {
     // 問題を作成し
-    const action = createQuestion(dummyData);
+    const action = createQuestion(dummyAnswerData);
     const result = reducer(undefined, action);
     // 文字を選択すると
-    const targetId = result.questionData[0].name[0].id;
+    const targetId = Object.keys(result.questionData[0].name)[0];
     const selectCharAction = selectChar(targetId);
     const selectCharResult = reducer(result, selectCharAction);
-    // 問題の文字が選択状態に
-    const selectedChar = selectCharResult.questionData.filter((question) => {
-      return question.name.filter((char) => {
-        return char.isSelected;
-      });
-    })[0].name[0];
-    expect(selectedChar?.id).toBe(targetId);
+    // 選択状態になり
+    const selectedChar = selectCharResult.questionData[0].name[targetId];
+    expect(selectedChar.isSelected).toBe(true);
+    // 文字の選択解除をすると
+    const deselectCharAction = deselectChar(targetId);
+    const deselectCharResult = reducer(selectCharResult, deselectCharAction);
+    const deselectedChar = deselectCharResult.questionData[0].name[targetId];
+    // 選択が解除される
+    expect(deselectedChar.isSelected).toBe(false);
   })
 })
 describe('anagramPuzzle selector', () => {
