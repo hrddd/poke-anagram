@@ -49,6 +49,31 @@ const initialState = {
   currentIndex: 0,
 };
 
+
+const getQuestionDataWithChangingSelectedParam = ({
+  questionData, targetId, shouldSelected
+}: {
+  questionData: QuestionData[];
+  targetId: string;
+  shouldSelected: boolean;
+}): QuestionData[] => {
+  return questionData.map((question) => {
+    // 設問中の選択されたidのcharのみ変更
+    const hasSelectedChar = Object.keys(question.name).some((charId) => charId === targetId)
+    const selectedChar = question.name[targetId];
+    return hasSelectedChar ? {
+      id: question.id,
+      name: {
+        ...question.name,
+        [targetId]: {
+          ...selectedChar,
+          isSelected: shouldSelected
+        }
+      }
+    } : question;
+  })
+};
+
 // reducer
 export const reducer = reducerWithInitialState(initialState)
   .case(createQuestion, (state, payload) => {
@@ -75,21 +100,10 @@ export const reducer = reducerWithInitialState(initialState)
     }
   })
   .case(selectChar, (state, payload) => {
-    const selectedId = payload;
-    const questionData = [...state.questionData].map((question) => {
-      // 設問中の選択されたidのcharのみ変更
-      const hasSelectedChar = Object.keys(question.name).some((charId) => charId === selectedId)
-      const selectedChar = question.name[selectedId];
-      return hasSelectedChar ? {
-        id: question.id,
-        name: {
-          ...question.name,
-          [selectedId]: {
-            ...selectedChar,
-            isSelected: true
-          }
-        }
-      } : question;
+    const questionData = getQuestionDataWithChangingSelectedParam({
+      questionData: state.questionData,
+      targetId: payload,
+      shouldSelected: true,
     })
     return {
       ...state,
@@ -97,21 +111,10 @@ export const reducer = reducerWithInitialState(initialState)
     }
   })
   .case(deselectChar, (state, payload) => {
-    const selectedId = payload;
-    const questionData = [...state.questionData].map((question) => {
-      // 設問中の選択されたidのcharのみ変更
-      const hasSelectedChar = Object.keys(question.name).some((charId) => charId === selectedId)
-      const selectedChar = question.name[selectedId];
-      return hasSelectedChar ? {
-        id: question.id,
-        name: {
-          ...question.name,
-          [selectedId]: {
-            ...selectedChar,
-            isSelected: false
-          }
-        }
-      } : question;
+    const questionData = getQuestionDataWithChangingSelectedParam({
+      questionData: state.questionData,
+      targetId: payload,
+      shouldSelected: false,
     })
     return {
       ...state,
