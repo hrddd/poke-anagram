@@ -49,6 +49,22 @@ describe('anagramPuzzle reducer', () => {
     // 選択が解除される
     expect(deselectedChar.isSelected).toBe(false);
   })
+  it('selectChar: 文字を入れ替える', () => {
+    // 問題を作成し
+    const action = createQuestion(dummyAnswerData);
+    const result = reducer(undefined, action);
+    // 2文字選択すると
+    const question = result.questionData[0].name;
+    const ids = [Object.keys(question)[0], Object.keys(question)[1]];
+
+    const selectCharResult = reducer(result, selectChar(ids[0]));
+    const nextSelectCharResult = reducer(selectCharResult, selectChar(ids[1]));
+    const currentQuestion = nextSelectCharResult.questionData[0].name;
+
+    // 文字の順番が入れ替わる
+    expect(question[ids[0]].order).toBe(currentQuestion[ids[1]].order);
+    expect(question[ids[1]].order).toBe(currentQuestion[ids[0]].order);
+  })
 })
 describe('anagramPuzzle selector', () => {
   it('StateからAnagramPazzle画面用のPropsを取得', () => {

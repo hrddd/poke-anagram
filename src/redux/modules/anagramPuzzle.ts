@@ -73,6 +73,23 @@ const getQuestionDataWithChangingSelectedParam = ({
     } : question;
   })
 };
+// TODO: isSelectedはネストが深いのでとっても見にくいし書き辛い。selectedChars[]とかにする
+// TODO: dummy
+const searchSelectedChars = (questionData: QuestionData): string[] => {
+
+  const firstVal = Object.values(questionData.name)[0];
+  const secondVal = Object.values(questionData.name)[1];
+  if (firstVal.isSelected && secondVal.isSelected) {
+    return [firstVal.id, secondVal.id]
+  } else if (firstVal.isSelected) {
+    return [firstVal.id]
+  } else if (secondVal.isSelected) {
+    return [secondVal.id]
+  } else {
+    return []
+  }
+};
+
 
 // reducer
 export const reducer = reducerWithInitialState(initialState)
@@ -105,10 +122,34 @@ export const reducer = reducerWithInitialState(initialState)
       targetId: payload,
       shouldSelected: true,
     })
-    return {
-      ...state,
-      questionData
+    // TODO: dummy
+    const selectedChars = searchSelectedChars(questionData[0]);
+    if (selectedChars.length > 1) {
+      questionData[0] = {
+        id: questionData[0].id,
+        name: {
+          ...questionData[0].name,
+          [selectedChars[0]]: {
+            ...questionData[0].name[selectedChars[0]],
+            order: questionData[0].name[selectedChars[1]].order
+          },
+          [selectedChars[1]]: {
+            ...questionData[0].name[selectedChars[1]],
+            order: questionData[0].name[selectedChars[0]].order
+          }
+        }
+      }
+      return {
+        ...state,
+        questionData
+      }
+    } else {
+      return {
+        ...state,
+        questionData
+      }
     }
+
   })
   .case(deselectChar, (state, payload) => {
     const questionData = getQuestionDataWithChangingSelectedParam({
