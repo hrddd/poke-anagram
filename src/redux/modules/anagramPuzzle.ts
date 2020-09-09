@@ -11,17 +11,38 @@ const shuffle = <T>([...array]: T[]): T[] => {
   }
   return array;
 }
+const normalizeById = <T extends IhasId>([...array]: T[]): { [key: string]: T } => {
+  if (array.length === 0 || !array[0].id) {
+    throw new Error('Cant normalizeById')
+  }
+  return array.reduce((memo, value) => {
+    return {
+      ...memo,
+      [value.id]: value
+    }
+  }, {})
+}
+const uniq = <T>([...array]: T[]): T[] => {
+  return array.filter((elem, index, self) => self.indexOf(elem) === index);
+}
 
 // actions
 const actionCreator = actionCreatorFactory('anagramPuzzle');
-
+type SelectPayload = {
+  questionId: string,
+  charId: string,
+}
 export const createQuestion = actionCreator<AnswerData[]>("CREATE_QUESTION");
-export const selectChar = actionCreator<string>("SELECT_CHAR");
-export const deselectChar = actionCreator<string>("DESELECT_CHAR");
+export const selectChar = actionCreator<SelectPayload>("SELECT_CHAR");
+export const deselectChar = actionCreator<SelectPayload>("DESELECT_CHAR");
 // export const createQuestion = actionCreator<number>("PICK_BASE_DATA");
 // export const completeAnagramPuzzle = actionCreator("COMPLETE");
 
 // state
+interface IhasId {
+  id: string;
+}
+
 type AnswerData = {
   id: string,
   name: string,
@@ -30,136 +51,119 @@ type AnswerData = {
 type Char = {
   id: string,
   char: string,
-  isSelected: boolean,
+  // isSelected: boolean,
   order: number
 }
 
 type QuestionData = {
   id: string,
+  selectedChars: string[];
   // 正規化された文字の分割データ
-  name: {
+  chars: {
     [key: string]: Char
   },
 }
 
 const initialState = {
-  answerData: [] as AnswerData[],
-  questionData: [] as QuestionData[],
+  answerData: {} as {
+    [key: string]: AnswerData
+  },
+  questionData: {} as {
+    [key: string]: QuestionData
+  },
   isComplete: false,
   currentIndex: 0,
 };
 
-
-const getQuestionDataWithChangingSelectedParam = ({
-  questionData, targetId, shouldSelected
-}: {
-  questionData: QuestionData[];
-  targetId: string;
-  shouldSelected: boolean;
-}): QuestionData[] => {
-  return questionData.map((question) => {
-    // 設問中の選択されたidのcharのみ変更
-    const hasSelectedChar = Object.keys(question.name).some((charId) => charId === targetId)
-    const selectedChar = question.name[targetId];
-    return hasSelectedChar ? {
-      id: question.id,
-      name: {
-        ...question.name,
-        [targetId]: {
-          ...selectedChar,
-          isSelected: shouldSelected
-        }
-      }
-    } : question;
-  })
-};
-// TODO: isSelectedはネストが深いのでとっても見にくいし書き辛い。selectedChars[]とかにする
-// TODO: dummy
-const searchSelectedChars = (questionData: QuestionData): string[] => {
-
-  const firstVal = Object.values(questionData.name)[0];
-  const secondVal = Object.values(questionData.name)[1];
-  if (firstVal.isSelected && secondVal.isSelected) {
-    return [firstVal.id, secondVal.id]
-  } else if (firstVal.isSelected) {
-    return [firstVal.id]
-  } else if (secondVal.isSelected) {
-    return [secondVal.id]
-  } else {
-    return []
-  }
-};
-
-
 // reducer
 export const reducer = reducerWithInitialState(initialState)
   .case(createQuestion, (state, payload) => {
-    const questionData = payload.map(({ id, name }) => {
+    const answerData = normalizeById(payload);
+    const questionData = normalizeById(payload.map(({ id, name }) => {
       const shuffledNames = shuffle<string>(name.split(''));
       return {
         id,
-        name: shuffledNames.reduce((memo: { [key: string]: Char }, char, idx) => {
+        selectedChars: [],
+        chars: normalizeById(shuffledNames.map((char, idx) => {
           const charId = `${id}_${char}_${idx}`;
-          memo[charId] = {
+          return {
             id: charId,
             char: char,
-            isSelected: false,
             order: idx
           }
-          return memo
-        }, {})
+        }))
       }
-    });
+    }));
     return {
       ...state,
-      answerData: payload,
+      answerData,
       questionData
     }
   })
-  .case(selectChar, (state, payload) => {
-    const questionData = getQuestionDataWithChangingSelectedParam({
-      questionData: state.questionData,
-      targetId: payload,
-      shouldSelected: true,
-    })
-    // TODO: dummy
-    const selectedChars = searchSelectedChars(questionData[0]);
-    if (selectedChars.length > 1) {
-      questionData[0] = {
-        id: questionData[0].id,
-        name: {
-          ...questionData[0].name,
-          [selectedChars[0]]: {
-            ...questionData[0].name[selectedChars[0]],
-            order: questionData[0].name[selectedChars[1]].order
-          },
-          [selectedChars[1]]: {
-            ...questionData[0].name[selectedChars[1]],
-            order: questionData[0].name[selectedChars[0]].order
+  .case(selectChar, (state, { questionId, charId }) => {
+    const selectedChars = uniq([...state.questionData[questionId].selectedChars, charId])
+    if (selectedChars.length === 1) {
+      // 選択状態が一個ならそのまま反映
+      return {
+        ...state,
+        questionData: {
+          ...state.questionData,
+          [questionId]: {
+            ...state.questionData[questionId],
+            selectedChars
           }
         }
       }
+    } else if (selectedChars.length === 2) {
+      // 選択状態が二個なら順番を入れ替えて選択状態を解除
+      const firstChar = state.questionData[questionId].chars[selectedChars[0]]
+      const secondChar = state.questionData[questionId].chars[selectedChars[1]]
       return {
         ...state,
-        questionData
+        questionData: {
+          ...state.questionData,
+          [questionId]: {
+            ...state.questionData[questionId],
+            selectedChars: [],
+            chars: {
+              ...state.questionData[questionId].chars,
+              [firstChar.id]: {
+                ...firstChar,
+                order: secondChar.order
+              },
+              [secondChar.id]: {
+                ...firstChar,
+                order: firstChar.order
+              }
+            }
+          }
+        }
       }
     } else {
+      // それ以外は選択状態を解除するのみ
       return {
         ...state,
-        questionData
+        questionData: {
+          ...state.questionData,
+          [questionId]: {
+            ...state.questionData[questionId],
+            selectedChars: []
+          }
+        }
       }
     }
-
   })
-  .case(deselectChar, (state, payload) => {
-    const questionData = getQuestionDataWithChangingSelectedParam({
-      questionData: state.questionData,
-      targetId: payload,
-      shouldSelected: false,
-    })
+  .case(deselectChar, (state, { questionId, charId }) => {
+    const selectedChars = state.questionData[questionId].selectedChars;
     return {
       ...state,
-      questionData
+      questionData: {
+        ...state.questionData,
+        [questionId]: {
+          ...state.questionData[questionId],
+          selectedChars: [...selectedChars].splice(1, selectedChars.indexOf(charId))
+        }
+      }
     }
   })
 // .case(pickAnswerData, (state, step) => {

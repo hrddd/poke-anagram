@@ -1,7 +1,7 @@
 import { reducer, State, selectAnagramPuzzle, createQuestion, selectChar, deselectChar } from '../anagramPuzzle';
 import { configureStore } from './configureMockStore';
 
-const dummyAnswerData = [{
+const dummyData = [{
   id: '1',
   name: 'フシギダネ'
 }, {
@@ -16,54 +16,82 @@ describe('anagramPuzzle reducer', () => {
   it('初期State', () => {
     const result = reducer(undefined, { type: 'hoge' });
     expect(result).toEqual({
-      answerData: [],
-      questionData: [],
+      answerData: {},
+      questionData: {},
       isComplete: false,
       currentIndex: 0,
     })
   })
   it('createQuestion: 問題を作成', () => {
     // データの乗ったActionが発行され
-    const action = createQuestion(dummyAnswerData);
+    const action = createQuestion(dummyData);
     // reducerに渡ったら
     const result = reducer(undefined, action);
     // 答えと問題がセットされる
-    expect(result.answerData).toEqual(dummyAnswerData);
-    expect(result.questionData.length).toEqual(result.answerData.length);
+    expect(result.answerData).toEqual({
+      '1': {
+        id: '1',
+        name: 'フシギダネ'
+      },
+      '20': {
+        id: '20',
+        name: 'クチート'
+      },
+      '300': {
+        id: '300',
+        name: 'ポリゴン'
+      }
+    });
+    const hasAllId = Object.keys(result.answerData).every((answerId) => {
+      return Object.keys(result.questionData).indexOf(answerId) >= 0
+    })
+    expect(hasAllId).toEqual(true);
   })
   it('selectChar: 文字を選択, deselectChar: 文字選択を解除', () => {
     // 問題を作成し
-    const action = createQuestion(dummyAnswerData);
+    const action = createQuestion(dummyData);
     const result = reducer(undefined, action);
     // 文字を選択すると
-    const targetId = Object.keys(result.questionData[0].name)[0];
-    const selectCharAction = selectChar(targetId);
+    const targetCharId = Object.keys(result.questionData['1'].chars)[0];
+    const payload = {
+      questionId: '1',
+      charId: Object.keys(result.questionData['1'].chars)[0]
+    };
+    const selectCharAction = selectChar(payload);
     const selectCharResult = reducer(result, selectCharAction);
     // 選択状態になり
-    const selectedChar = selectCharResult.questionData[0].name[targetId];
-    expect(selectedChar.isSelected).toBe(true);
+    expect(selectCharResult.questionData['1'].selectedChars)
+      .toContain(targetCharId)
     // 文字の選択解除をすると
-    const deselectCharAction = deselectChar(targetId);
+    const deselectCharAction = deselectChar(payload);
     const deselectCharResult = reducer(selectCharResult, deselectCharAction);
-    const deselectedChar = deselectCharResult.questionData[0].name[targetId];
     // 選択が解除される
-    expect(deselectedChar.isSelected).toBe(false);
+    expect(deselectCharResult.questionData['1'].selectedChars)
+      .toEqual([])
   })
   it('selectChar: 文字を入れ替える', () => {
     // 問題を作成し
-    const action = createQuestion(dummyAnswerData);
+    const action = createQuestion(dummyData);
     const result = reducer(undefined, action);
     // 2文字選択すると
-    const question = result.questionData[0].name;
-    const ids = [Object.keys(question)[0], Object.keys(question)[1]];
+    const questionId = '1'
+    const question = result.questionData[questionId].chars;
+    const charIds = [Object.keys(question)[0], Object.keys(question)[1]]
+    const payload = [{
+      questionId,
+      charId: charIds[0]
+    }, {
+      questionId,
+      charId: charIds[1]
+    }];
+    const defaultChars = result.questionData[questionId].chars;
 
-    const selectCharResult = reducer(result, selectChar(ids[0]));
-    const nextSelectCharResult = reducer(selectCharResult, selectChar(ids[1]));
-    const currentQuestion = nextSelectCharResult.questionData[0].name;
-
+    const selectCharResult = reducer(result, selectChar(payload[0]));
+    const nextSelectCharResult = reducer(selectCharResult, selectChar(payload[1]));
+    const changedChars = nextSelectCharResult.questionData[questionId].chars;
     // 文字の順番が入れ替わる
-    expect(question[ids[0]].order).toBe(currentQuestion[ids[1]].order);
-    expect(question[ids[1]].order).toBe(currentQuestion[ids[0]].order);
+    expect(changedChars[charIds[0]].order).toBe(defaultChars[charIds[1]].order);
+    expect(changedChars[charIds[1]].order).toBe(defaultChars[charIds[0]].order);
   })
 })
 describe('anagramPuzzle selector', () => {
