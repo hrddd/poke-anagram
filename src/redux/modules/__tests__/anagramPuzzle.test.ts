@@ -1,4 +1,4 @@
-import { reducer, State, selectAnagramPuzzle, createQuestion, selectChar, deselectChar } from '../anagramPuzzle';
+import { reducer, selectAnagramPuzzle, createQuestion, selectChar, deselectChar } from '../anagramPuzzle';
 import { configureStore } from './configureMockStore';
 
 const dummyData = [{
@@ -31,15 +31,18 @@ describe('anagramPuzzle reducer', () => {
     expect(result.answerData).toEqual({
       '1': {
         id: '1',
-        name: 'フシギダネ'
+        name: 'フシギダネ',
+        order: 0
       },
       '20': {
         id: '20',
-        name: 'クチート'
+        name: 'クチート',
+        order: 1
       },
       '300': {
         id: '300',
-        name: 'ポリゴン'
+        name: 'ポリゴン',
+        order: 2
       }
     });
     const hasAllId = Object.keys(result.answerData).every((answerId) => {
@@ -99,7 +102,7 @@ describe('anagramPuzzle selector', () => {
     // createStoreし
     const store = configureStore();
     // selectAnagramPuzzleにstateが渡れば
-    const result: State = selectAnagramPuzzle(store.getState());
+    const result = selectAnagramPuzzle(store.getState());
     // データを返す
     expect(result).toEqual({
       answerData: [],

@@ -11,7 +11,7 @@ const shuffle = <T>([...array]: T[]): T[] => {
   }
   return array;
 }
-const normalizeById = <T extends IhasId>([...array]: T[]): { [key: string]: T } => {
+const normalizeById = <T extends ICanBeNormalized>([...array]: T[]): { [key: string]: T } => {
   if (array.length === 0 || !array[0].id) {
     throw new Error('Cant normalizeById')
   }
@@ -21,6 +21,11 @@ const normalizeById = <T extends IhasId>([...array]: T[]): { [key: string]: T } 
       [value.id]: value
     }
   }, {})
+}
+const denormalizeByOrder = <T extends ICanBeDenormalized>({ ...obj }: {
+  [key: string]: T
+}): T[] => {
+  return Object.values(obj).sort((item) => item.order)
 }
 const uniq = <T>([...array]: T[]): T[] => {
   return array.filter((elem, index, self) => self.indexOf(elem) === index);
@@ -32,20 +37,30 @@ type SelectPayload = {
   questionId: string,
   charId: string,
 }
-export const createQuestion = actionCreator<AnswerData[]>("CREATE_QUESTION");
+export const createQuestion = actionCreator<BaseData[]>("CREATE_QUESTION");
 export const selectChar = actionCreator<SelectPayload>("SELECT_CHAR");
 export const deselectChar = actionCreator<SelectPayload>("DESELECT_CHAR");
 // export const createQuestion = actionCreator<number>("PICK_BASE_DATA");
 // export const completeAnagramPuzzle = actionCreator("COMPLETE");
 
 // state
-interface IhasId {
+interface ICanBeNormalized {
   id: string;
+}
+
+interface ICanBeDenormalized {
+  order: number;
+}
+
+type BaseData = {
+  id: string,
+  name: string,
 }
 
 type AnswerData = {
   id: string,
   name: string,
+  order: number
 }
 
 type Char = {
@@ -58,6 +73,7 @@ type Char = {
 type QuestionData = {
   id: string,
   selectedChars: string[];
+  order: number;
   // 正規化された文字の分割データ
   chars: {
     [key: string]: Char
@@ -77,13 +93,18 @@ const initialState = {
 
 // reducer
 export const reducer = reducerWithInitialState(initialState)
-  .case(createQuestion, (state, payload) => {
-    const answerData = normalizeById(payload);
-    const questionData = normalizeById(payload.map(({ id, name }) => {
+  .case(createQuestion, (state, baseData) => {
+    const baseDataWithOrder = baseData.map((item, idx) => ({
+      ...item,
+      order: idx
+    }))
+    const answerData = normalizeById(baseDataWithOrder);
+    const questionData = normalizeById(baseDataWithOrder.map(({ id, name }, qIdx) => {
       const shuffledNames = shuffle<string>(name.split(''));
       return {
         id,
         selectedChars: [],
+        order: qIdx,
         chars: normalizeById(shuffledNames.map((char, idx) => {
           const charId = `${id}_${char}_${idx}`;
           return {
@@ -232,9 +253,12 @@ export const reducer = reducerWithInitialState(initialState)
 export const selectAnagramPuzzle = createSelector(
   (state: RootState) => state.ui.anagramPuzzle,
   (anagramPuzzle) => ({
-    ...anagramPuzzle,
+    answerData: denormalizeByOrder(anagramPuzzle.answerData),
+    questionData: denormalizeByOrder(anagramPuzzle.questionData),
+    isComplete: anagramPuzzle.isComplete,
+    currentIndex: anagramPuzzle.currentIndex,
     currentStep: anagramPuzzle.currentIndex + 1,
-    maxStep: anagramPuzzle.answerData.length,
+    maxStep: Object.keys(anagramPuzzle.answerData).length,
   })
 );
 
