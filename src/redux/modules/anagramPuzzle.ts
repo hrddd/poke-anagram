@@ -37,7 +37,7 @@ type SelectPayload = {
   questionId: string,
   charId: string,
 }
-export const createQuestion = actionCreator<BaseData[]>("CREATE_QUESTION");
+export const createQuestion = actionCreator<Name[]>("CREATE_QUESTION");
 export const selectChar = actionCreator<SelectPayload>("SELECT_CHAR");
 export const deselectChar = actionCreator<SelectPayload>("DESELECT_CHAR");
 
@@ -50,9 +50,15 @@ interface ICanBeDenormalized {
   order: number;
 }
 
-type BaseData = {
+type Name = {
   id: string,
   name: string,
+}
+
+type QuestionBaseData = {
+  id: string,
+  name: string,
+  order: number
 }
 
 type AnswerData = {
@@ -64,7 +70,6 @@ type AnswerData = {
 type Char = {
   id: string,
   char: string,
-  // isSelected: boolean,
   order: number
 }
 
@@ -90,33 +95,34 @@ const initialState = {
 };
 
 // reducer
+const generateQuestionData = (nameWithOrder: QuestionBaseData[]) => {
+  return normalizeById(nameWithOrder.map(({ id, name }, qIdx) => {
+    const shuffledNames = shuffle<string>(name.split(''));
+    return {
+      id,
+      selectedChars: [],
+      order: qIdx,
+      chars: normalizeById(shuffledNames.map((char, idx) => {
+        const charId = `${id}_${char}_${idx}`;
+        return {
+          id: charId,
+          char: char,
+          order: idx
+        }
+      }))
+    }
+  }))
+}
 export const reducer = reducerWithInitialState(initialState)
-  .case(createQuestion, (state, baseData) => {
-    const baseDataWithOrder = baseData.map((item, idx) => ({
+  .case(createQuestion, (state, name) => {
+    const nameWithOrder = name.map((item, idx) => ({
       ...item,
       order: idx
     }))
-    const answerData = normalizeById(baseDataWithOrder);
-    const questionData = normalizeById(baseDataWithOrder.map(({ id, name }, qIdx) => {
-      const shuffledNames = shuffle<string>(name.split(''));
-      return {
-        id,
-        selectedChars: [],
-        order: qIdx,
-        chars: normalizeById(shuffledNames.map((char, idx) => {
-          const charId = `${id}_${char}_${idx}`;
-          return {
-            id: charId,
-            char: char,
-            order: idx
-          }
-        }))
-      }
-    }));
     return {
       ...state,
-      answerData,
-      questionData
+      answerData: normalizeById(nameWithOrder),
+      questionData: generateQuestionData(nameWithOrder)
     }
   })
   .case(selectChar, (state, { questionId, charId }) => {
@@ -190,7 +196,6 @@ export const reducer = reducerWithInitialState(initialState)
 export const selectAnagramPuzzle = createSelector(
   (state: RootState) => state.ui.anagramPuzzle,
   (anagramPuzzle) => ({
-    answerData: denormalizeByOrder(anagramPuzzle.answerData),
     questionData: denormalizeByOrder(anagramPuzzle.questionData),
     isComplete: anagramPuzzle.isComplete,
     currentIndex: anagramPuzzle.currentIndex,

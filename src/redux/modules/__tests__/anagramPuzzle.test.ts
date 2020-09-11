@@ -105,7 +105,6 @@ describe('anagramPuzzle selector', () => {
     const result = selectAnagramPuzzle(store.getState());
     // データを返す
     expect(result).toEqual({
-      answerData: [],
       questionData: [],
       isComplete: false,
       currentIndex: 0,
