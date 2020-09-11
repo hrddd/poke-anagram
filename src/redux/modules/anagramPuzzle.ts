@@ -40,8 +40,6 @@ type SelectPayload = {
 export const createQuestion = actionCreator<BaseData[]>("CREATE_QUESTION");
 export const selectChar = actionCreator<SelectPayload>("SELECT_CHAR");
 export const deselectChar = actionCreator<SelectPayload>("DESELECT_CHAR");
-// export const createQuestion = actionCreator<number>("PICK_BASE_DATA");
-// export const completeAnagramPuzzle = actionCreator("COMPLETE");
 
 // state
 interface ICanBeNormalized {
@@ -187,67 +185,6 @@ export const reducer = reducerWithInitialState(initialState)
       }
     }
   })
-// .case(pickAnswerData, (state, step) => {
-//   const pickedData = state.AnswerData.slice(0, Math.min(step, state.AnswerData.length));
-//   return {
-//     ...state,
-//     AnswerData: payload
-//   }
-// })
-// .case(setAnagramPuzzleAnswerData, (state, { data, step }) => {
-//   const AnswerData = shuffle<AnswerData>(data.map(({ id, name: {
-//     japanese: name
-//   } }) => {
-//     return {
-//       id,
-//       name
-//     }
-//   })).slice(0, Math.min(step, data.length));
-
-//   const questionData = AnswerData.map(({ id, name }) => {
-//     return {
-//       id,
-//       name: shuffle<string>(name.split('')).map((char, idx) => ({
-//         id: `${id}_${char}_${idx}`,
-//         char: char,
-//         isSelected: false,
-//         order: idx
-//       }))
-//     }
-//   });
-
-//   return {
-//     ...state,
-//     AnswerData,
-//     questionData
-//   };
-// })
-// .case(selectChar, (state, { questionId, charId }) => {
-//   // 該当の設問の文字だけ更新
-//   const questionData = [...state.questionData].map((question) => {
-//     return question.id === questionId ? {
-//       id: question.id,
-//       name: question.name.map((char) => {
-//         return char.id === charId ? {
-//           id: char.id,
-//           char: char.char,
-//           isSelected: !char.isSelected,
-//           order: char.order
-//         } : char
-//       })
-//     } : question;
-//   })
-//   return {
-//     ...state,
-//     questionData
-//   };
-// })
-// .case(completeAnagramPuzzle, (state) => {
-//   return {
-//     ...state,
-//     isComplete: true
-//   };
-// });
 
 // selector
 export const selectAnagramPuzzle = createSelector(
