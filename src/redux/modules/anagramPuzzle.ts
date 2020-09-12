@@ -75,7 +75,6 @@ type Char = {
 
 type QuestionData = {
   id: string,
-  selectedChars: string[];
   order: number;
   // 正規化された文字の分割データ
   chars: {
@@ -90,6 +89,7 @@ const initialState = {
   questionData: {} as {
     [key: string]: QuestionData
   },
+  selectedChars: [] as QuestionData['id'][],
   isComplete: false,
   currentIndex: 0,
 };
@@ -100,7 +100,6 @@ const generateQuestionData = (nameWithOrder: QuestionBaseData[]) => {
     const shuffledNames = shuffle<string>(name.split(''));
     return {
       id,
-      selectedChars: [],
       order: qIdx,
       chars: normalizeById(shuffledNames.map((char, idx) => {
         const charId = `${id}_${char}_${idx}`;
@@ -112,6 +111,27 @@ const generateQuestionData = (nameWithOrder: QuestionBaseData[]) => {
       }))
     }
   }))
+}
+const updateSelectedChars = (state: State, selectedChars: Char['id'][]) => {
+  return {
+    ...state,
+    selectedChars
+  }
+}
+const switchChars = (targeChars: Char['id'][], chars: QuestionData['chars']) => {
+  const firstChar = chars[targeChars[0]]
+  const secondChar = chars[targeChars[1]]
+  return {
+    ...chars,
+    [firstChar.id]: {
+      ...firstChar,
+      order: secondChar.order
+    },
+    [secondChar.id]: {
+      ...firstChar,
+      order: firstChar.order
+    }
+  }
 }
 export const reducer = reducerWithInitialState(initialState)
   .case(createQuestion, (state, name) => {
@@ -126,41 +146,20 @@ export const reducer = reducerWithInitialState(initialState)
     }
   })
   .case(selectChar, (state, { questionId, charId }) => {
-    const selectedChars = uniq([...state.questionData[questionId].selectedChars, charId])
+    const selectedChars = uniq([...state.selectedChars, charId])
     if (selectedChars.length === 1) {
       // 選択状態が一個ならそのまま反映
-      return {
-        ...state,
-        questionData: {
-          ...state.questionData,
-          [questionId]: {
-            ...state.questionData[questionId],
-            selectedChars
-          }
-        }
-      }
+      return updateSelectedChars(state, selectedChars)
     } else if (selectedChars.length === 2) {
       // 選択状態が二個なら順番を入れ替えて選択状態を解除
-      const firstChar = state.questionData[questionId].chars[selectedChars[0]]
-      const secondChar = state.questionData[questionId].chars[selectedChars[1]]
       return {
         ...state,
         questionData: {
           ...state.questionData,
+          selectedChars: [],
           [questionId]: {
             ...state.questionData[questionId],
-            selectedChars: [],
-            chars: {
-              ...state.questionData[questionId].chars,
-              [firstChar.id]: {
-                ...firstChar,
-                order: secondChar.order
-              },
-              [secondChar.id]: {
-                ...firstChar,
-                order: firstChar.order
-              }
-            }
+            chars: switchChars(selectedChars, state.questionData[questionId].chars)
           }
         }
       }
@@ -186,7 +185,7 @@ export const reducer = reducerWithInitialState(initialState)
         ...state.questionData,
         [questionId]: {
           ...state.questionData[questionId],
-          selectedChars: [...selectedChars].splice(1, selectedChars.indexOf(charId))
+          selectedChars: [...selectedChars].splice(selectedChars.indexOf(charId), 1)
         }
       }
     }

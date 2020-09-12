@@ -16,6 +16,7 @@ describe('anagramPuzzle reducer', () => {
   it('初期State', () => {
     const result = reducer(undefined, { type: 'hoge' });
     expect(result).toEqual({
+      selectedChars: [],
       answerData: {},
       questionData: {},
       isComplete: false,
@@ -63,13 +64,13 @@ describe('anagramPuzzle reducer', () => {
     const selectCharAction = selectChar(payload);
     const selectCharResult = reducer(result, selectCharAction);
     // 選択状態になり
-    expect(selectCharResult.questionData['1'].selectedChars)
+    expect(selectCharResult.selectedChars)
       .toContain(targetCharId)
     // 文字の選択解除をすると
     const deselectCharAction = deselectChar(payload);
     const deselectCharResult = reducer(selectCharResult, deselectCharAction);
     // 選択が解除される
-    expect(deselectCharResult.questionData['1'].selectedChars)
+    expect(deselectCharResult.selectedChars)
       .toEqual([])
   })
   it('selectChar: 文字を入れ替える', () => {
