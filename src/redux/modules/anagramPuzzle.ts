@@ -12,9 +12,6 @@ const shuffle = <T>([...array]: T[]): T[] => {
   }
   return array;
 }
-// const getValues = <T>([...array]: T[], key: keyof T) => {
-//   return array.reduce((acc, item) => [...acc, item[key]], [] as any[]);
-// }
 const swap = <T>([...array]: T[], index1: number, index2: number): T[] => {
   const x = Math.min(index1, index2)
   const y = Math.max(index1, index2)
@@ -27,6 +24,20 @@ const swap = <T>([...array]: T[], index1: number, index2: number): T[] => {
     ...array.slice(y + 1),
   ];
 }
+interface NormalizeAbleById {
+  id: string
+}
+const normalizeById = <T extends NormalizeAbleById>([...array]: T[]): { [key: string]: T } => {
+  if (array.length === 0 || !array[0].id) {
+    throw new Error('Cant normalizeById')
+  }
+  return array.reduce((memo, value) => {
+    return {
+      ...memo,
+      [value.id]: value
+    }
+  }, {})
+}
 
 // actions
 const actionCreator = actionCreatorFactory('anagramPuzzle');
@@ -38,9 +49,15 @@ export const createQuestion = actionCreator<Base[]>("CREATE_QUESTION");
 export const selectChar = actionCreator<SelectPayload>("SELECT_CHAR");
 export const deselectChar = actionCreator("DESELECT_CHAR");
 export const swapChars = actionCreator<SelectPayload>("SWITCH_CHAR");
+export const checkAnswers = actionCreator("CHECK_ANSWERS");
 
 // state
 type Base = {
+  id: string,
+  name: string,
+}
+
+type Answer = {
   id: string,
   name: string,
 }
@@ -57,10 +74,12 @@ type SelectedChar = {
 } | null
 
 const initialState = {
-  answers: [] as Base[],
+  answers: {} as {
+    [key in string]: Answer
+  },
   questions: [] as Question[],
   selectedChar: null as SelectedChar,
-  isComplete: false,
+  correctQuestions: [] as Question['id'][],
   currentIndex: 0,
 };
 
@@ -79,7 +98,7 @@ export const reducer = reducerWithInitialState(initialState)
   .case(createQuestion, (state, baseData) => {
     return {
       ...state,
-      answers: [...baseData],
+      answers: normalizeById(baseData),
       questions: generateQuestionData(baseData)
     }
   })
@@ -118,6 +137,16 @@ export const reducer = reducerWithInitialState(initialState)
         ...questions.slice(targetQIndex + 1),
       ],
       selectedChar: null
+    }
+  })
+  .case(checkAnswers, (state) => {
+    const { answers, questions } = state;
+    const correctQuestions = questions
+      .filter(q => q.currentName === answers[q.id].name)
+      .reduce((acc, q) => [...acc, q.id], [] as string[])
+    return {
+      ...state,
+      correctQuestions
     }
   })
 

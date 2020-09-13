@@ -1,11 +1,11 @@
-import { reducer, createQuestion, selectChar, deselectChar, swapChars } from '../anagramPuzzle';
+import { reducer, createQuestion, selectChar, deselectChar, swapChars, checkAnswers } from '../anagramPuzzle';
 import { configureStore } from './configureMockStore';
 
 const initialState = {
-  answers: [],
+  answers: {},
   questions: [],
   selectedChar: null,
-  isComplete: false,
+  correctQuestions: [],
   currentIndex: 0,
 };
 
@@ -22,15 +22,21 @@ describe('anagramPuzzle reducer', () => {
     }, {
       id: '20',
       name: 'クチート'
-    }, {
-      id: '300',
-      name: 'ポリゴン'
     }];
     const action = createQuestion(baseData);
     const result = reducer(undefined, action);
     // 答えと問題がセットされる
-    expect(result.answers).toEqual(baseData);
-    expect(result.questions).toHaveLength(3);
+    expect(result.answers).toEqual({
+      '1': {
+        id: '1',
+        name: 'フシギダネ'
+      },
+      '20': {
+        id: '20',
+        name: 'クチート'
+      }
+    });
+    expect(result.questions).toHaveLength(2);
   })
   it('selectChar: 文字を選択', () => {
     // 文字を指定すると
@@ -85,30 +91,35 @@ describe('anagramPuzzle reducer', () => {
       currentName: 'フギシダネ',
     })
   })
-  // it('selectChar: 文字を入れ替える', () => {
-  //   // 問題を作成し
-  //   const action = createQuestion(dummyData);
-  //   const result = reducer(undefined, action);
-  //   // 2文字選択すると
-  //   const questionId = '1'
-  //   const question = result.questionData[questionId].chars;
-  //   const charIds = [Object.keys(question)[0], Object.keys(question)[1]]
-  //   const payload = [{
-  //     questionId,
-  //     charId: charIds[0]
-  //   }, {
-  //     questionId,
-  //     charId: charIds[1]
-  //   }];
-  //   const defaultChars = result.questionData[questionId].chars;
-
-  //   const selectCharResult = reducer(result, selectChar(payload[0]));
-  //   const nextSelectCharResult = reducer(selectCharResult, selectChar(payload[1]));
-  //   const changedChars = nextSelectCharResult.questionData[questionId].chars;
-  //   // 文字の順番が入れ替わる
-  //   expect(changedChars[charIds[0]].order).toBe(defaultChars[charIds[1]].order);
-  //   expect(changedChars[charIds[1]].order).toBe(defaultChars[charIds[0]].order);
-  // })
+  it('checkAnswers: 正誤判定', () => {
+    // 正解の判定をすると
+    const action = checkAnswers();
+    const result = reducer({
+      ...initialState,
+      answers: {
+        '1': {
+          id: '1',
+          name: 'フシギダネ'
+        },
+        '20': {
+          id: '20',
+          name: 'クチート'
+        }
+      },
+      questions: [{
+        id: '1',
+        name: 'ギフシダネ',
+        currentName: 'フシギダネ',
+      }, {
+        id: '20',
+        name: 'トーチク',
+        currentName: 'トーチク',
+      }],
+    }, action)
+    // 正解した問題の配列にidが追加される
+    expect(result.correctQuestions.includes('1')).toBe(true)
+    expect(result.correctQuestions.includes('20')).toBe(false)
+  })
 })
 // describe('anagramPuzzle selector', () => {
 //   it('StateからAnagramPazzle画面用のPropsを取得', () => {
