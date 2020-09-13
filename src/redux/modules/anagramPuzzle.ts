@@ -12,6 +12,21 @@ const shuffle = <T>([...array]: T[]): T[] => {
   }
   return array;
 }
+// const getValues = <T>([...array]: T[], key: keyof T) => {
+//   return array.reduce((acc, item) => [...acc, item[key]], [] as any[]);
+// }
+const swap = <T>([...array]: T[], index1: number, index2: number): T[] => {
+  const x = Math.min(index1, index2)
+  const y = Math.max(index1, index2)
+
+  return [
+    ...array.slice(0, x),
+    array[y],
+    ...array.slice(x + 1, y),
+    array[x],
+    ...array.slice(y + 1),
+  ];
+}
 
 // actions
 const actionCreator = actionCreatorFactory('anagramPuzzle');
@@ -22,6 +37,7 @@ type SelectPayload = {
 export const createQuestion = actionCreator<Base[]>("CREATE_QUESTION");
 export const selectChar = actionCreator<SelectPayload>("SELECT_CHAR");
 export const deselectChar = actionCreator("DESELECT_CHAR");
+export const swapChars = actionCreator<SelectPayload>("SWITCH_CHAR");
 
 // state
 type Base = {
@@ -31,7 +47,8 @@ type Base = {
 
 type Question = {
   id: string,
-  chars: string[],
+  name: string,
+  currentName: string,
 }
 
 type SelectedChar = {
@@ -50,9 +67,11 @@ const initialState = {
 // reducer
 const generateQuestionData = (base: Base[]) => {
   return base.map(({ id, name }) => {
+    const shuffledName = shuffle<string>(name.split('')).join('');
     return {
       id,
-      chars: shuffle<string>(name.split('')),
+      name: shuffledName,
+      currentName: shuffledName
     }
   })
 }
@@ -73,6 +92,31 @@ export const reducer = reducerWithInitialState(initialState)
   .case(deselectChar, (state) => {
     return {
       ...state,
+      selectedChar: null
+    }
+  })
+  .case(swapChars, (state, nextSelectedChar) => {
+    if (state.selectedChar === null || state.selectedChar.questionId !== nextSelectedChar.questionId) {
+      return { ...state }
+    }
+    const { questions, selectedChar } = state;
+    const targetQIndex = state.questions.reduce((acc, question) => [...acc, question.id], [] as string[]).indexOf(selectedChar.questionId);
+    const targetQ = questions[targetQIndex];
+    return {
+      ...state,
+      questions: [
+        ...questions.slice(0, targetQIndex),
+        {
+          id: targetQ.id,
+          name: targetQ.name,
+          currentName: swap(
+            targetQ.currentName.split(''),
+            selectedChar.charIndex,
+            nextSelectedChar.charIndex
+          ).join('')
+        },
+        ...questions.slice(targetQIndex + 1),
+      ],
       selectedChar: null
     }
   })

@@ -1,16 +1,5 @@
-import { reducer, createQuestion, selectChar, deselectChar } from '../anagramPuzzle';
+import { reducer, createQuestion, selectChar, deselectChar, swapChars } from '../anagramPuzzle';
 import { configureStore } from './configureMockStore';
-
-const dummyData = [{
-  id: '1',
-  name: 'フシギダネ'
-}, {
-  id: '20',
-  name: 'クチート'
-}, {
-  id: '300',
-  name: 'ポリゴン'
-}];
 
 const initialState = {
   answers: [],
@@ -27,10 +16,7 @@ describe('anagramPuzzle reducer', () => {
   })
   it('createQuestion: 問題を作成', () => {
     // ベースとなるデータを渡すと
-    const action = createQuestion(dummyData);
-    const result = reducer(undefined, action);
-    // 答えと問題がセットされる
-    expect(result.answers).toEqual([{
+    const baseData = [{
       id: '1',
       name: 'フシギダネ'
     }, {
@@ -39,11 +25,15 @@ describe('anagramPuzzle reducer', () => {
     }, {
       id: '300',
       name: 'ポリゴン'
-    }]);
+    }];
+    const action = createQuestion(baseData);
+    const result = reducer(undefined, action);
+    // 答えと問題がセットされる
+    expect(result.answers).toEqual(baseData);
     expect(result.questions).toHaveLength(3);
   })
   it('selectChar: 文字を選択', () => {
-    // 入れ替える文字を指定すると
+    // 文字を指定すると
     const action = selectChar({
       questionId: '1',
       charIndex: 0
@@ -67,6 +57,33 @@ describe('anagramPuzzle reducer', () => {
     }, action)
     // 選択中の文字が解除される
     expect(result.selectedChar).toEqual(null)
+  })
+  it('swapChars: 文字を入れ替え', () => {
+    // 入れ替える文字を指定してactionを発行すると
+    const action = swapChars({
+      questionId: '1',
+      charIndex: 1
+    })
+    const result = reducer({
+      ...initialState,
+      questions: [{
+        id: '1',
+        name: 'ギフシダネ',
+        currentName: 'ギフシダネ',
+      }],
+      selectedChar: {
+        questionId: '1',
+        charIndex: 0
+      }
+    }, action)
+    // 選択中の文字がクリアされ
+    expect(result.selectedChar).toEqual(null)
+    // 文字が入れ替わる
+    expect(result.questions[0]).toEqual({
+      id: '1',
+      name: 'ギフシダネ',
+      currentName: 'フギシダネ',
+    })
   })
   // it('selectChar: 文字を入れ替える', () => {
   //   // 問題を作成し
