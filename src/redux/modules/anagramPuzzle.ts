@@ -2,6 +2,7 @@ import { reducerWithInitialState } from "typescript-fsa-reducers";
 import { createSelector } from "reselect";
 import { RootState } from "./reducer";
 import actionCreatorFactory from "typescript-fsa";
+import { selectPokeData } from './pokeData';
 
 // util
 const shuffle = <T>([...array]: T[]): T[] => {
@@ -11,23 +12,16 @@ const shuffle = <T>([...array]: T[]): T[] => {
   }
   return array;
 }
-interface ICanBeNormalized {
-  id: string;
+
+// actions
+const actionCreator = actionCreatorFactory('anagramPuzzle');
+type SelectPayload = {
+  questionId: string,
+  charIndex: number,
 }
-const normalizeById = <T extends ICanBeNormalized>([...array]: T[]): { [key: string]: T } => {
-  if (array.length === 0 || !array[0].id) {
-    throw new Error('Cant normalizeById')
-  }
-  return array.reduce((memo, value) => {
-    return {
-      ...memo,
-      [value.id]: value
-    }
-  }, {})
-}
-const uniq = <T>([...array]: T[]): T[] => {
-  return array.filter((elem, index, self) => self.indexOf(elem) === index);
-}
+export const createQuestion = actionCreator<Base[]>("CREATE_QUESTION");
+export const selectChar = actionCreator<SelectPayload>("SELECT_CHAR");
+export const deselectChar = actionCreator("DESELECT_CHAR");
 
 // state
 type Base = {
@@ -40,21 +34,18 @@ type Question = {
   chars: string[],
 }
 
+type SelectedChar = {
+  questionId: string,
+  charIndex: number
+} | null
+
 const initialState = {
   answers: [] as Base[],
   questions: [] as Question[],
+  selectedChar: null as SelectedChar,
   isComplete: false,
   currentIndex: 0,
 };
-
-// actions
-const actionCreator = actionCreatorFactory('anagramPuzzle');
-type SelectPayload = {
-  charId: string,
-}
-export const createQuestion = actionCreator<Base[]>("CREATE_QUESTION");
-export const selectChar = actionCreator<SelectPayload>("SELECT_CHAR");
-export const deselectChar = actionCreator<SelectPayload>("DESELECT_CHAR");
 
 // reducer
 const generateQuestionData = (base: Base[]) => {
@@ -65,27 +56,6 @@ const generateQuestionData = (base: Base[]) => {
     }
   })
 }
-// const updateSelectedChars = (state: State, selectedChars: Char['id'][]) => {
-//   return {
-//     ...state,
-//     selectedChars
-//   }
-// }
-// const switchChars = (targeChars: Char['id'][], chars: QuestionData['chars']) => {
-//   const firstChar = chars[targeChars[0]]
-//   const secondChar = chars[targeChars[1]]
-//   return {
-//     ...chars,
-//     [firstChar.id]: {
-//       ...firstChar,
-//       order: secondChar.order
-//     },
-//     [secondChar.id]: {
-//       ...firstChar,
-//       order: firstChar.order
-//     }
-//   }
-// }
 export const reducer = reducerWithInitialState(initialState)
   .case(createQuestion, (state, baseData) => {
     return {
@@ -94,51 +64,18 @@ export const reducer = reducerWithInitialState(initialState)
       questions: generateQuestionData(baseData)
     }
   })
-//   .case(selectChar, (state, { questionId, charId }) => {
-//     const selectedChars = uniq([...state.selectedChars, charId])
-//     if (selectedChars.length === 1) {
-//       // 選択状態が一個ならそのまま反映
-//       return updateSelectedChars(state, selectedChars)
-//     } else if (selectedChars.length === 2) {
-//       // 選択状態が二個なら順番を入れ替えて選択状態を解除
-//       return {
-//         ...state,
-//         questionData: {
-//           ...state.questionData,
-//           selectedChars: [],
-//           [questionId]: {
-//             ...state.questionData[questionId],
-//             chars: switchChars(selectedChars, state.questionData[questionId].chars)
-//           }
-//         }
-//       }
-//     } else {
-//       // それ以外は選択状態を解除するのみ
-//       return {
-//         ...state,
-//         questionData: {
-//           ...state.questionData,
-//           [questionId]: {
-//             ...state.questionData[questionId],
-//             selectedChars: []
-//           }
-//         }
-//       }
-//     }
-//   })
-//   .case(deselectChar, (state, { questionId, charId }) => {
-//     const selectedChars = state.questionData[questionId].selectedChars;
-//     return {
-//       ...state,
-//       questionData: {
-//         ...state.questionData,
-//         [questionId]: {
-//           ...state.questionData[questionId],
-//           selectedChars: [...selectedChars].splice(selectedChars.indexOf(charId), 1)
-//         }
-//       }
-//     }
-//   })
+  .case(selectChar, (state, selectedChar) => {
+    return {
+      ...state,
+      selectedChar
+    }
+  })
+  .case(deselectChar, (state) => {
+    return {
+      ...state,
+      selectedChar: null
+    }
+  })
 
 // selector
 // export const selectAnagramPuzzle = createSelector(

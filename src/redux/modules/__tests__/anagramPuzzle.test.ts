@@ -1,4 +1,4 @@
-import { reducer, selectAnagramPuzzle, createQuestion, selectChar, deselectChar } from '../anagramPuzzle';
+import { reducer, createQuestion, selectChar, deselectChar } from '../anagramPuzzle';
 import { configureStore } from './configureMockStore';
 
 const dummyData = [{
@@ -12,20 +12,22 @@ const dummyData = [{
   name: 'ポリゴン'
 }];
 
+const initialState = {
+  answers: [],
+  questions: [],
+  selectedChar: null,
+  isComplete: false,
+  currentIndex: 0,
+};
+
 describe('anagramPuzzle reducer', () => {
   it('初期State', () => {
     const result = reducer(undefined, { type: 'hoge' });
-    expect(result).toEqual({
-      answers: [],
-      questions: [],
-      isComplete: false,
-      currentIndex: 0,
-    })
+    expect(result).toEqual(initialState)
   })
   it('createQuestion: 問題を作成', () => {
-    // データの乗ったActionが発行され
+    // ベースとなるデータを渡すと
     const action = createQuestion(dummyData);
-    // reducerに渡ったら
     const result = reducer(undefined, action);
     // 答えと問題がセットされる
     expect(result.answers).toEqual([{
@@ -40,28 +42,32 @@ describe('anagramPuzzle reducer', () => {
     }]);
     expect(result.questions).toHaveLength(3);
   })
-  // it('selectChar: 文字を選択, deselectChar: 文字選択を解除', () => {
-  //   // 問題を作成し
-  //   const action = createQuestion(dummyData);
-  //   const result = reducer(undefined, action);
-  //   // 文字を選択すると
-  //   const targetCharId = Object.keys(result.questionData['1'].chars)[0];
-  //   const payload = {
-  //     questionId: '1',
-  //     charId: Object.keys(result.questionData['1'].chars)[0]
-  //   };
-  //   const selectCharAction = selectChar(payload);
-  //   const selectCharResult = reducer(result, selectCharAction);
-  //   // 選択状態になり
-  //   expect(selectCharResult.selectedChars)
-  //     .toContain(targetCharId)
-  //   // 文字の選択解除をすると
-  //   const deselectCharAction = deselectChar(payload);
-  //   const deselectCharResult = reducer(selectCharResult, deselectCharAction);
-  //   // 選択が解除される
-  //   expect(deselectCharResult.selectedChars)
-  //     .toEqual([])
-  // })
+  it('selectChar: 文字を選択', () => {
+    // 入れ替える文字を指定すると
+    const action = selectChar({
+      questionId: '1',
+      charIndex: 0
+    })
+    const result = reducer(undefined, action)
+    // 選択中の文字に追加される
+    expect(result.selectedChar).toEqual({
+      questionId: '1',
+      charIndex: 0
+    })
+  })
+  it('deselectChar: 文字選択を解除', () => {
+    // deselectCharが発行されると
+    const action = deselectChar()
+    const result = reducer({
+      ...initialState,
+      selectedChar: {
+        questionId: '1',
+        charIndex: 0
+      }
+    }, action)
+    // 選択中の文字が解除される
+    expect(result.selectedChar).toEqual(null)
+  })
   // it('selectChar: 文字を入れ替える', () => {
   //   // 問題を作成し
   //   const action = createQuestion(dummyData);
