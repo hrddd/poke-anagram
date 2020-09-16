@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect } from "react";
 import { AnagramPuzzleComponent } from './AnaglamPuzzle';
-import { selectAnagramPuzzle, selectChar, SelectCharPayload, createQuestion, checkAnswers, swapChars } from '../../../redux/modules/anagramPuzzle';
+import { selectAnagramPuzzle, selectChar, SelectCharPayload, createQuestion, checkAnswers, swapChars, deselectChar } from '../../../redux/modules/anagramPuzzle';
 import { usePokeDex } from "../../hooks/usePokeDex";
 import { useCallback } from 'react';
 
@@ -30,6 +30,9 @@ const Component: React.FC = () => {
       && selectedChar?.charIndex !== charIndex) {
       dispatch(swapChars(payload))
       dispatch(checkAnswers())
+    } else if (selectedChar?.questionId === questionId
+      && selectedChar?.charIndex === charIndex) {
+      dispatch(deselectChar())
     } else {
       dispatch(selectChar(payload))
     }
