@@ -2,7 +2,6 @@ import { reducerWithInitialState } from "typescript-fsa-reducers";
 import { createSelector } from "reselect";
 import { RootState } from "./reducer";
 import actionCreatorFactory from "typescript-fsa";
-import { selectPokeData } from './pokeData';
 
 // util
 const shuffle = <T>([...array]: T[]): T[] => {
@@ -28,8 +27,9 @@ interface NormalizeAbleById {
   id: string
 }
 const normalizeById = <T extends NormalizeAbleById>([...array]: T[]): { [key: string]: T } => {
-  if (array.length === 0 || !array[0].id) {
-    throw new Error('Cant normalizeById')
+  if (array.length === 0) return {}
+  if (!array[0].id) {
+    throw new Error('Can not normalize by Id')
   }
   return array.reduce((memo, value) => {
     return {
@@ -41,14 +41,14 @@ const normalizeById = <T extends NormalizeAbleById>([...array]: T[]): { [key: st
 
 // actions
 const actionCreator = actionCreatorFactory('anagramPuzzle');
-type SelectPayload = {
+export type SelectCharPayload = {
   questionId: string,
   charIndex: number,
 }
 export const createQuestion = actionCreator<Base[]>("CREATE_QUESTION");
-export const selectChar = actionCreator<SelectPayload>("SELECT_CHAR");
+export const selectChar = actionCreator<SelectCharPayload>("SELECT_CHAR");
 export const deselectChar = actionCreator("DESELECT_CHAR");
-export const swapChars = actionCreator<SelectPayload>("SWITCH_CHAR");
+export const swapChars = actionCreator<SelectCharPayload>("SWITCH_CHAR");
 export const checkAnswers = actionCreator("CHECK_ANSWERS");
 
 // state
@@ -80,7 +80,6 @@ const initialState = {
   questions: [] as Question[],
   selectedChar: null as SelectedChar,
   correctQuestions: [] as Question['id'][],
-  currentIndex: 0,
 };
 
 // reducer
@@ -151,16 +150,22 @@ export const reducer = reducerWithInitialState(initialState)
   })
 
 // selector
-// export const selectAnagramPuzzle = createSelector(
-//   (state: RootState) => state.ui.anagramPuzzle,
-//   ({ questions, isComplete, currentIndex }) => ({
-//     questions,
-//     isComplete,
-//     currentIndex,
-//     currentStep: currentIndex + 1,
-//     maxStep: Object.keys(questions).length,
-//   })
-// );
+const generateQuestionViewData = (questions: Question[], selectedChar: SelectedChar) => {
+  return questions.map((question) => ({
+    id: question.id,
+    chars: question.currentName.split('').map((char, idx) => ({
+      char,
+      isSelected: selectedChar?.questionId === question.id && selectedChar.charIndex === idx
+    })),
+  }))
+}
+export const selectAnagramPuzzle = createSelector(
+  (state: RootState) => state.ui.anagramPuzzle,
+  ({ questions, selectedChar }) => ({
+    questions: generateQuestionViewData(questions, selectedChar),
+    selectedChar
+  })
+);
 
-// export type SelectedAnagramPuzzle = ReturnType<typeof selectAnagramPuzzle>;
+export type SelectedAnagramPuzzle = ReturnType<typeof selectAnagramPuzzle>;
 export type State = typeof initialState;

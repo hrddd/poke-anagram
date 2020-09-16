@@ -3,14 +3,26 @@ import { createSelector } from "reselect";
 import { RootState } from "./reducer";
 import actionCreatorFactory from "typescript-fsa";
 
+// util
+const generateLightData = (pokeDex: PokeDex) => {
+  return pokeDex.map((pokeData) => ({
+    id: pokeData.id.toString(),
+    name: pokeData.name.japanese
+  }))
+}
+
 // actions
 const actionCreator = actionCreatorFactory('pokeData');
 
 export const fetchPokeData = actionCreator.async<string, PokeDex, string>("FETCH");
 
 // state
+type LightPokeData = {
+  id: string;
+  name: string;
+}
 const initialState = {
-  allPokeData: [] as PokeDex,
+  allPokeData: [] as LightPokeData[],
   isLoading: false,
 };
 
@@ -22,7 +34,7 @@ export const pokeData = reducerWithInitialState(initialState)
   }))
   .case(fetchPokeData.done, (state, { result: allPokeData }) => ({
     ...state,
-    allPokeData,
+    allPokeData: generateLightData(allPokeData),
     isLoading: false,
   }))
   .case(fetchPokeData.failed, (state) => ({

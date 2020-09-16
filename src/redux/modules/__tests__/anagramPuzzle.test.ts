@@ -1,4 +1,4 @@
-import { reducer, createQuestion, selectChar, deselectChar, swapChars, checkAnswers } from '../anagramPuzzle';
+import { reducer, createQuestion, selectChar, deselectChar, swapChars, checkAnswers, selectAnagramPuzzle } from '../anagramPuzzle';
 import { configureStore } from './configureMockStore';
 
 const initialState = {
@@ -6,7 +6,6 @@ const initialState = {
   questions: [],
   selectedChar: null,
   correctQuestions: [],
-  currentIndex: 0,
 };
 
 describe('anagramPuzzle reducer', () => {
@@ -121,19 +120,16 @@ describe('anagramPuzzle reducer', () => {
     expect(result.correctQuestions.includes('20')).toBe(false)
   })
 })
-// describe('anagramPuzzle selector', () => {
-//   it('StateからAnagramPazzle画面用のPropsを取得', () => {
-//     // createStoreし
-//     const store = configureStore();
-//     // selectAnagramPuzzleにstateが渡れば
-//     const result = selectAnagramPuzzle(store.getState());
-//     // データを返す
-//     expect(result).toEqual({
-//       questionData: [],
-//       isComplete: false,
-//       currentIndex: 0,
-//       currentStep: 1,
-//       maxStep: 0,
-//     });
-//   })
-// })
+describe('anagramPuzzle selector', () => {
+  it('StateからAnagramPazzle画面用のPropsを取得', () => {
+    // createStoreし
+    const store = configureStore();
+    // selectAnagramPuzzleにstateが渡れば
+    const result = selectAnagramPuzzle(store.getState());
+    // データを返す
+    expect(result).toEqual({
+      questions: [],
+      selectedChar: null,
+    });
+  })
+})

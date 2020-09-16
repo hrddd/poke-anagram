@@ -1,13 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect } from "react";
 import { AnagramPuzzleComponent } from './AnaglamPuzzle';
-import { selectAnagramPuzzle, setAnagramPuzzleBaseData, selectChar, SelectCharPayload } from '../../../redux/modules/anagramPuzzle';
+import { selectAnagramPuzzle, selectChar, SelectCharPayload, createQuestion, checkAnswers, swapChars } from '../../../redux/modules/anagramPuzzle';
 import { usePokeDex } from "../../hooks/usePokeDex";
 import { useCallback } from 'react';
 
 const Component: React.FC = () => {
   const dispatch = useDispatch();
-  const anagramPuzzle = useSelector(selectAnagramPuzzle);
+  const { questions, selectedChar } = useSelector(selectAnagramPuzzle);
   const [{ firstPokeData }, fetchData] = usePokeDex();
 
   useEffect(() => {
@@ -15,19 +15,29 @@ const Component: React.FC = () => {
   }, [fetchData])
 
   useEffect(() => {
-    dispatch(setAnagramPuzzleBaseData({
-      data: firstPokeData,
-      step: 10
-    }));
+    // TODO: 無駄に複数回走るので調整する
+    dispatch(createQuestion(firstPokeData.slice(0, 10)));
   }, [dispatch, firstPokeData])
 
-  const handleOnClickFactory = useCallback((payload: SelectCharPayload) => (e: React.MouseEvent<HTMLButtonElement>) => {
-    dispatch(selectChar(payload))
-  }, [dispatch])
+  const handleOnClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    const questionId = e.currentTarget.name
+    const charIndex = Number(e.currentTarget.value)
+    const payload: SelectCharPayload = {
+      questionId,
+      charIndex,
+    }
+    if (selectedChar?.questionId === questionId
+      && selectedChar?.charIndex !== charIndex) {
+      dispatch(swapChars(payload))
+      dispatch(checkAnswers())
+    } else {
+      dispatch(selectChar(payload))
+    }
+  }, [dispatch, selectedChar])
 
   return (<AnagramPuzzleComponent
-    anagramPuzzle={anagramPuzzle}
-    handleOnClickFactory={handleOnClickFactory}
+    questions={questions}
+    handleOnClick={handleOnClick}
   />);
 };
 
