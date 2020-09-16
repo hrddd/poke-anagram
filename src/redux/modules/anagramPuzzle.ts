@@ -150,20 +150,30 @@ export const reducer = reducerWithInitialState(initialState)
   })
 
 // selector
-const generateQuestionViewData = (questions: Question[], selectedChar: SelectedChar) => {
+const generateQuestionViewData = ({
+  questions,
+  selectedChar,
+  correctQuestions
+}: {
+  questions: Question[],
+  selectedChar: SelectedChar,
+  correctQuestions: Question['id'][]
+}) => {
   return questions.map((question) => ({
     id: question.id,
     chars: question.currentName.split('').map((char, idx) => ({
       char,
       isSelected: selectedChar?.questionId === question.id && selectedChar.charIndex === idx
     })),
+    isCorrect: correctQuestions.includes(question.id)
   }))
 }
 export const selectAnagramPuzzle = createSelector(
   (state: RootState) => state.ui.anagramPuzzle,
-  ({ questions, selectedChar }) => ({
-    questions: generateQuestionViewData(questions, selectedChar),
-    selectedChar
+  ({ questions, selectedChar, correctQuestions }) => ({
+    questions: generateQuestionViewData({ questions, selectedChar, correctQuestions }),
+    selectedChar,
+    isAllCorrect: correctQuestions.length === questions.length && questions.length !== 0
   })
 );
 

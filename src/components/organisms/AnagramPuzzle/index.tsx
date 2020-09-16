@@ -7,7 +7,7 @@ import { useCallback } from 'react';
 
 const Component: React.FC = () => {
   const dispatch = useDispatch();
-  const { questions, selectedChar } = useSelector(selectAnagramPuzzle);
+  const { questions, selectedChar, isAllCorrect } = useSelector(selectAnagramPuzzle);
   const [{ firstPokeData }, fetchData] = usePokeDex();
 
   useEffect(() => {
@@ -16,7 +16,7 @@ const Component: React.FC = () => {
 
   useEffect(() => {
     // TODO: 無駄に複数回走るので調整する
-    dispatch(createQuestion(firstPokeData.slice(0, 10)));
+    dispatch(createQuestion(firstPokeData.slice(0, 2)));
   }, [dispatch, firstPokeData])
 
   const handleOnClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
@@ -37,6 +37,7 @@ const Component: React.FC = () => {
 
   return (<AnagramPuzzleComponent
     questions={questions}
+    isAllCorrect={isAllCorrect}
     handleOnClick={handleOnClick}
   />);
 };

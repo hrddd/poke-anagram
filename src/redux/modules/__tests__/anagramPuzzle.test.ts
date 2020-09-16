@@ -130,6 +130,7 @@ describe('anagramPuzzle selector', () => {
     expect(result).toEqual({
       questions: [],
       selectedChar: null,
+      isAllCorrect: false
     });
   })
 })

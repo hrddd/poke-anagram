@@ -3,6 +3,7 @@ import { SelectedAnagramPuzzle } from '../../../redux/modules/anagramPuzzle';
 
 type Props = {
   questions: SelectedAnagramPuzzle['questions'],
+  isAllCorrect: boolean,
   handleOnClick: (e: React.MouseEvent<HTMLButtonElement>) => void
 };
 
@@ -24,7 +25,7 @@ const Char = (props: CharProps) => {
 };
 
 type QuestionsProps = {
-  questions: { id: string, chars: { char: string, isSelected: boolean }[] }[],
+  questions: { id: string, chars: { char: string, isSelected: boolean }[], isCorrect: boolean }[],
   handleOnClick: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
 const Questions = (props: QuestionsProps) => {
@@ -33,7 +34,7 @@ const Questions = (props: QuestionsProps) => {
     {questions.map((question) => (
       <li
         key={`Questions${question.id}`}
-        style={{ marginTop: '16px' }}
+        style={{ marginTop: '16px', background: question.isCorrect ? 'blue' : 'white' }}
       >
         {question.chars.map((char, idx) => (<Char
           key={`Questions${question.id}${idx}`}
@@ -43,18 +44,24 @@ const Questions = (props: QuestionsProps) => {
           isSelected={char.isSelected}
           handleOnClick={handleOnClick}
         />))}
+        {question.isCorrect && (<div style={{ color: "white" }}>
+          正解！
+        </div>)}
       </li>
     ))}
   </ul>)
 };
 
 const Component: React.SFC<Props> = (props) => {
-  const { questions, handleOnClick } = props;
+  const { questions, handleOnClick, isAllCorrect } = props;
   return (
     <>
       {questions.length > 0 && (<Questions
         questions={questions} handleOnClick={handleOnClick}
       />)}
+      {isAllCorrect && (<div>
+        全問正解！
+      </div>)}
     </>
   );
 };
