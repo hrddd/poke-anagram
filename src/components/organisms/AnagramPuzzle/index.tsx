@@ -4,6 +4,8 @@ import { AnagramPuzzleComponent } from './AnaglamPuzzle';
 import { selectAnagramPuzzle, selectChar, SelectCharPayload, createQuestion, checkAnswers, swapChars, deselectChar } from '../../../redux/modules/anagramPuzzle';
 import { usePokeDex } from "../../hooks/usePokeDex";
 import { useCallback } from 'react';
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 const Component: React.FC = () => {
   const dispatch = useDispatch();
@@ -38,11 +40,38 @@ const Component: React.FC = () => {
     }
   }, [dispatch, selectedChar])
 
-  return (<AnagramPuzzleComponent
-    questions={questions}
-    isAllCorrect={isAllCorrect}
-    handleOnClick={handleOnClick}
-  />);
+  type HandleOnDropArg = {
+    questionId: string,
+    beforeIndex: number,
+    afterIndex: number,
+  }
+  const handleOnDrop = useCallback(({
+    questionId,
+    beforeIndex,
+    afterIndex,
+  }: HandleOnDropArg) => {
+    const beforePayload: SelectCharPayload = {
+      questionId,
+      charIndex: beforeIndex
+    }
+    const afterPayload: SelectCharPayload = {
+      questionId,
+      charIndex: afterIndex,
+    }
+    dispatch(selectChar(beforePayload))
+    dispatch(swapChars(afterPayload))
+    dispatch(checkAnswers())
+  }, [dispatch])
+
+  return (
+    <DndProvider backend={HTML5Backend}>
+      <AnagramPuzzleComponent
+        questions={questions}
+        isAllCorrect={isAllCorrect}
+        handleOnClick={handleOnClick}
+        handleOnDrop={handleOnDrop}
+      />
+    </DndProvider>);
 };
 
 export const AnagramPuzzle = Component;
