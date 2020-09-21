@@ -35,67 +35,73 @@ const ItemTypes = {
 }
 const Char = (props: CharProps) => {
   const { isSelected, char, handleOnClick, name, value, index, handleOnDrop, id } = props;
-  // const ref = React.useRef<HTMLDivElement>(null)
+  const ref = React.useRef<HTMLDivElement>(null)
   // const [, drop] = useDrop({
+  //   // ココをdragで設定したitemのtypeに合わせる
   //   accept: ItemTypes.CARD,
+  //   // dragしたitemがhoverした（重なった）際の挙動
   //   hover(item: DragItem, monitor: DropTargetMonitor) {
-  //     if (!ref.current) {
-  //       return
-  //     }
-  //     const dragIndex = item.index
-  //     const hoverIndex = index
+  //     console.log(item)
+  //     // if (!ref.current) {
+  //     //   return
+  //     // }
+  //     //     const dragIndex = item.index
+  //     //     const hoverIndex = index
 
-  //     // Don't replace items with themselves
-  //     if (dragIndex === hoverIndex) {
-  //       return
-  //     }
+  //     //     // Don't replace items with themselves
+  //     //     if (dragIndex === hoverIndex) {
+  //     //       return
+  //     //     }
 
-  //     // Determine rectangle on screen
-  //     const hoverBoundingRect = ref.current?.getBoundingClientRect()
+  //     //     // Determine rectangle on screen
+  //     //     const hoverBoundingRect = ref.current?.getBoundingClientRect()
 
-  //     // Get vertical middle
-  //     const hoverMiddleY =
-  //       (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
+  //     //     // Get vertical middle
+  //     //     const hoverMiddleY =
+  //     //       (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
 
-  //     // Determine mouse position
-  //     const clientOffset = monitor.getClientOffset()
+  //     //     // Determine mouse position
+  //     //     const clientOffset = monitor.getClientOffset()
 
-  //     // Get pixels to the top
-  //     const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top
+  //     //     // Get pixels to the top
+  //     //     const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top
 
-  //     // Only perform the move when the mouse has crossed half of the items height
-  //     // When dragging downwards, only move when the cursor is below 50%
-  //     // When dragging upwards, only move when the cursor is above 50%
+  //     //     // Only perform the move when the mouse has crossed half of the items height
+  //     //     // When dragging downwards, only move when the cursor is below 50%
+  //     //     // When dragging upwards, only move when the cursor is above 50%
 
-  //     // Dragging downwards
-  //     if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-  //       return
-  //     }
+  //     //     // Dragging downwards
+  //     //     if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+  //     //       return
+  //     //     }
 
-  //     // Dragging upwards
-  //     if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-  //       return
-  //     }
+  //     //     // Dragging upwards
+  //     //     if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+  //     //       return
+  //     //     }
 
-  //     // Time to actually perform the action
-  //     handleOnDrop({
-  //       questionId: name,
-  //       beforeIndex: dragIndex,
-  //       afterIndex: hoverIndex,
-  //     })
+  //     //     // Time to actually perform the action
+  //     //     handleOnDrop({
+  //     //       questionId: name,
+  //     //       beforeIndex: dragIndex,
+  //     //       afterIndex: hoverIndex,
+  //     //     })
 
   //     // Note: we're mutating the monitor item here!
   //     // Generally it's better to avoid mutations,
   //     // but it's good here for the sake of performance
   //     // to avoid expensive index searches.
-  //     item.index = hoverIndex
+  //     // item.index = hoverIndex
   //   },
   // })
   const [{ opacity }, dragRef] = useDrag({
     item: { type: ItemTypes.CARD, id, index },
-    collect: (monitor) => ({
-      opacity: monitor.isDragging() ? 0.5 : 1
-    })
+    collect: (monitor) => {
+      // console.log(monitor)
+      return {
+        opacity: monitor.isDragging() ? 0.5 : 1
+      }
+    }
   })
   // dragRef(drop(ref))
   return (<button
@@ -147,6 +153,12 @@ const Questions = (props: QuestionsProps) => {
 
 const Component: React.SFC<Props> = (props) => {
   const { questions, handleOnClick, isAllCorrect, handleOnDrop } = props;
+  const [, dropRef] = useDrop({
+    accept: ItemTypes.CARD,
+    hover(item: DragItem, monitor: DropTargetMonitor) {
+      console.log(item)
+    },
+  })
   return (
     <>
       {questions.length > 0 && (<Questions
@@ -155,6 +167,15 @@ const Component: React.SFC<Props> = (props) => {
       {isAllCorrect && (<div>
         全問正解！
       </div>)}
+      <div
+        ref={dropRef}
+        style={{
+          padding: '40px',
+          background: 'red',
+          color: 'white'
+        }}>
+        Can you drop here ?
+      </div>
     </>
   );
 };
