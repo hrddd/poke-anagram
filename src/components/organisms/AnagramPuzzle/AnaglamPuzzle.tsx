@@ -53,7 +53,11 @@ const Char = (props: CharProps) => {
       if (!ref.current || item.index === index) {
         return
       }
-      console.log(item)
+      handleOnDrop({
+        questionId: name,
+        beforeIndex: item.index,
+        afterIndex: index,
+      })
     }
   })
   const [{ opacity }, drag] = useDrag({

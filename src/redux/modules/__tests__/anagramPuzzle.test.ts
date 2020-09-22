@@ -82,6 +82,9 @@ describe('anagramPuzzle reducer', () => {
       }
     }, action)
     // 選択中の文字がクリアされ
+    // todo: selectedCharベースにしちゃうとtestがfatになる
+    // 選択中に同じindexを選択すると、追加されちゃったり、バグの好きが多い
+    // 引数にする
     expect(result.selectedChar).toEqual(null)
     // 文字が入れ替わる
     expect(result.questions[0]).toEqual({
@@ -90,6 +93,8 @@ describe('anagramPuzzle reducer', () => {
       currentName: 'フギシダネ',
     })
   })
+  // todo: swapCharsのNG項目についてテストしておく
+  // questionを跨いだ変更はされない、同じindexなら変更されない
   it('checkAnswers: 正誤判定', () => {
     // 正解の判定をすると
     const action = checkAnswers();
