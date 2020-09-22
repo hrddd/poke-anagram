@@ -1,6 +1,6 @@
 import * as React from "react";
 import { SelectedAnagramPuzzle } from '../../../redux/modules/anagramPuzzle';
-import { useDrag, useDrop, DropTargetMonitor, XYCoord } from 'react-dnd'
+import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd'
 
 type HandleOnDropArg = {
   questionId: string,
@@ -118,12 +118,6 @@ const Questions = (props: QuestionsProps) => {
 
 const Component: React.SFC<Props> = (props) => {
   const { questions, handleOnClick, isAllCorrect, handleOnDrop } = props;
-  const [, dropRef] = useDrop({
-    accept: ItemTypes.CARD,
-    hover(item: DragItem, monitor: DropTargetMonitor) {
-      console.log(item)
-    },
-  })
   return (
     <>
       {questions.length > 0 && (<Questions
@@ -132,15 +126,6 @@ const Component: React.SFC<Props> = (props) => {
       {isAllCorrect && (<div>
         全問正解！
       </div>)}
-      <div
-        ref={dropRef}
-        style={{
-          padding: '40px',
-          background: 'red',
-          color: 'white'
-        }}>
-        Can you drop here ?
-      </div>
     </>
   );
 };
