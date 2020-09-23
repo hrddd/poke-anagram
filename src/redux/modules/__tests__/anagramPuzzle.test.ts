@@ -87,8 +87,83 @@ describe('anagramPuzzle reducer', () => {
       currentName: 'フギシダネ',
     })
   })
-  // todo: swapCharsのNG項目についてテストしておく
-  // questionを跨いだ変更はされない、同じindexなら変更されない
+  it('swapChars: 3個以上の入れ替えは無効', () => {
+    const action = swapChars([{
+      questionId: '1',
+      charIndex: 0
+    }, {
+      questionId: '1',
+      charIndex: 1
+    }, {
+      questionId: '1',
+      charIndex: 2
+    }])
+    const result = reducer({
+      ...initialState,
+      questions: [{
+        id: '1',
+        name: 'ギフシダネ',
+        currentName: 'ギフシダネ',
+      }, {
+        id: '20',
+        name: 'クチート',
+        currentName: 'トーチク',
+      }]
+    }, action)
+    expect(result.questions).toEqual([{
+      id: '1',
+      name: 'ギフシダネ',
+      currentName: 'ギフシダネ',
+    }, {
+      id: '20',
+      name: 'クチート',
+      currentName: 'トーチク',
+    }])
+  })
+  it('swapChars: 同じindexの入れ替えは無効', () => {
+    const action = swapChars([{
+      questionId: '1',
+      charIndex: 0
+    }, {
+      questionId: '1',
+      charIndex: 0
+    }])
+    const result = reducer({
+      ...initialState,
+      questions: [{
+        id: '1',
+        name: 'ギフシダネ',
+        currentName: 'ギフシダネ',
+      }]
+    }, action)
+    expect(result.questions).toEqual([{
+      id: '1',
+      name: 'ギフシダネ',
+      currentName: 'ギフシダネ',
+    }])
+  })
+  it('swapChars: 問題またぎの入れ替えは無効', () => {
+    const action = swapChars([{
+      questionId: '1',
+      charIndex: 0
+    }, {
+      questionId: '20',
+      charIndex: 1
+    }])
+    const result = reducer({
+      ...initialState,
+      questions: [{
+        id: '1',
+        name: 'ギフシダネ',
+        currentName: 'ギフシダネ',
+      }]
+    }, action)
+    expect(result.questions).toEqual([{
+      id: '1',
+      name: 'ギフシダネ',
+      currentName: 'ギフシダネ',
+    }])
+  })
   it('checkAnswers: 正誤判定', () => {
     // 正解の判定をすると
     const action = checkAnswers();

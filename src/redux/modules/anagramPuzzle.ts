@@ -114,7 +114,11 @@ export const reducer = reducerWithInitialState(initialState)
     }
   })
   .case(swapChars, (state, targetChars) => {
-    if (targetChars.length !== 2 || targetChars[0].questionId !== targetChars[1].questionId) {
+    if (
+      targetChars.length !== 2
+      || targetChars[0].questionId !== targetChars[1].questionId
+      || targetChars[0].charIndex === targetChars[1].charIndex
+    ) {
       return { ...state }
     }
     const { questions } = state;
