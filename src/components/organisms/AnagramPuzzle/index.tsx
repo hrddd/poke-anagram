@@ -49,6 +49,7 @@ const Component: React.FC = () => {
   ]: SelectCharPayload[]) => {
     dispatch(swapChars([before, after]))
     dispatch(checkAnswers())
+    dispatch(deselectChar())
   }, [dispatch])
 
   return (
