@@ -24,42 +24,30 @@ const Component: React.FC = () => {
   const handleOnClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     const questionId = e.currentTarget.name
     const charIndex = Number(e.currentTarget.value)
-    const payload: SelectCharPayload = {
+    const currentSelectedChar: SelectCharPayload = {
       questionId,
       charIndex,
     }
     if (selectedChar?.questionId === questionId
       && selectedChar?.charIndex !== charIndex) {
-      dispatch(swapChars(payload))
+      // すでに選択済みの文字があり、入れ替え可能な場合
+      dispatch(swapChars([selectedChar, currentSelectedChar]))
       dispatch(checkAnswers())
+      dispatch(deselectChar())
     } else if (selectedChar?.questionId === questionId
       && selectedChar?.charIndex === charIndex) {
+      // 選択済みの文字をクリックした場合
       dispatch(deselectChar())
     } else {
-      dispatch(selectChar(payload))
+      dispatch(selectChar(currentSelectedChar))
     }
   }, [dispatch, selectedChar])
 
-  type HandleOnDropArg = {
-    questionId: string,
-    beforeIndex: number,
-    afterIndex: number,
-  }
-  const handleOnDrop = useCallback(({
-    questionId,
-    beforeIndex,
-    afterIndex,
-  }: HandleOnDropArg) => {
-    const beforePayload: SelectCharPayload = {
-      questionId,
-      charIndex: beforeIndex
-    }
-    const afterPayload: SelectCharPayload = {
-      questionId,
-      charIndex: afterIndex,
-    }
-    dispatch(selectChar(beforePayload))
-    dispatch(swapChars(afterPayload))
+  const handleOnDrop = useCallback(([
+    before,
+    after,
+  ]: SelectCharPayload[]) => {
+    dispatch(swapChars([before, after]))
     dispatch(checkAnswers())
   }, [dispatch])
 

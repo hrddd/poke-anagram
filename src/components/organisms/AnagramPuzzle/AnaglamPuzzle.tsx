@@ -1,18 +1,12 @@
 import * as React from "react";
-import { SelectedAnagramPuzzle } from '../../../redux/modules/anagramPuzzle';
+import { SelectedAnagramPuzzle, SelectCharPayload } from '../../../redux/modules/anagramPuzzle';
 import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd'
-
-type HandleOnDropArg = {
-  questionId: string,
-  beforeIndex: number,
-  afterIndex: number,
-}
 
 type Props = {
   questions: SelectedAnagramPuzzle['questions'],
   isAllCorrect: boolean,
   handleOnClick: (e: React.MouseEvent<HTMLButtonElement>) => void,
-  handleOnDrop: (arg: HandleOnDropArg) => void
+  handleOnDrop: (arg: SelectCharPayload[]) => void
 };
 
 type CharProps = {
@@ -20,10 +14,9 @@ type CharProps = {
   isSelected: boolean,
   name: string,
   value: string,
-  id: string,
   index: number,
   handleOnClick: (e: React.MouseEvent<HTMLButtonElement>) => void,
-  handleOnDrop: (arg: HandleOnDropArg) => void
+  handleOnDrop: (arg: SelectCharPayload[]) => void
 }
 interface DragItem {
   index: number
@@ -34,7 +27,7 @@ const ItemTypes = {
   CARD: 'card',
 }
 const Char = (props: CharProps) => {
-  const { isSelected, char, handleOnClick, name, value, index, handleOnDrop, id } = props;
+  const { isSelected, char, handleOnClick, name, value, index, handleOnDrop } = props;
   const ref = React.useRef<HTMLButtonElement>(null)
   const [, drop] = useDrop({
     // ココをdragで設定したitemのtypeに合わせる
@@ -53,15 +46,11 @@ const Char = (props: CharProps) => {
       if (!ref.current || item.index === index) {
         return
       }
-      handleOnDrop({
-        questionId: name,
-        beforeIndex: item.index,
-        afterIndex: index,
-      })
+      handleOnDrop([{ questionId: item.id, charIndex: item.index }, { questionId: name, charIndex: index }])
     }
   })
   const [{ opacity }, drag] = useDrag({
-    item: { type: ItemTypes.CARD, id, index },
+    item: { type: ItemTypes.CARD, id: name, index },
     collect: (monitor) => {
       return {
         opacity: monitor.isDragging() ? 0.5 : 1
@@ -87,7 +76,7 @@ const Char = (props: CharProps) => {
 type QuestionsProps = {
   questions: { id: string, chars: { char: string, isSelected: boolean }[], isCorrect: boolean }[],
   handleOnClick: (e: React.MouseEvent<HTMLButtonElement>) => void,
-  handleOnDrop: (arg: HandleOnDropArg) => void
+  handleOnDrop: (arg: SelectCharPayload[]) => void
 }
 const Questions = (props: QuestionsProps) => {
   const { questions, handleOnClick, handleOnDrop } = props;
@@ -99,7 +88,6 @@ const Questions = (props: QuestionsProps) => {
       >
         {question.chars.map((char, index) => (<Char
           key={`Questions${question.id}${index}`}
-          id={`Questions${question.id}${index}`}
           value={index.toString()}
           index={index}
           char={char.char}

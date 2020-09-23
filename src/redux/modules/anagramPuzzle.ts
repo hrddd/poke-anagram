@@ -48,7 +48,7 @@ export type SelectCharPayload = {
 export const createQuestion = actionCreator<Base[]>("CREATE_QUESTION");
 export const selectChar = actionCreator<SelectCharPayload>("SELECT_CHAR");
 export const deselectChar = actionCreator("DESELECT_CHAR");
-export const swapChars = actionCreator<SelectCharPayload>("SWITCH_CHAR");
+export const swapChars = actionCreator<SelectCharPayload[]>("SWAP_CHAR");
 export const checkAnswers = actionCreator("CHECK_ANSWERS");
 
 // state
@@ -113,12 +113,12 @@ export const reducer = reducerWithInitialState(initialState)
       selectedChar: null
     }
   })
-  .case(swapChars, (state, nextSelectedChar) => {
-    if (state.selectedChar === null || state.selectedChar.questionId !== nextSelectedChar.questionId) {
+  .case(swapChars, (state, targetChars) => {
+    if (targetChars.length !== 2 || targetChars[0].questionId !== targetChars[1].questionId) {
       return { ...state }
     }
-    const { questions, selectedChar } = state;
-    const targetQIndex = state.questions.reduce((acc, question) => [...acc, question.id], [] as string[]).indexOf(selectedChar.questionId);
+    const { questions } = state;
+    const targetQIndex = state.questions.reduce((acc, question) => [...acc, question.id], [] as string[]).indexOf(targetChars[0].questionId);
     const targetQ = questions[targetQIndex];
     return {
       ...state,
@@ -129,13 +129,12 @@ export const reducer = reducerWithInitialState(initialState)
           name: targetQ.name,
           currentName: swap(
             targetQ.currentName.split(''),
-            selectedChar.charIndex,
-            nextSelectedChar.charIndex
+            targetChars[0].charIndex,
+            targetChars[1].charIndex
           ).join('')
         },
         ...questions.slice(targetQIndex + 1),
-      ],
-      selectedChar: null
+      ]
     }
   })
   .case(checkAnswers, (state) => {

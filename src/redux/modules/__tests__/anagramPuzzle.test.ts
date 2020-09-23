@@ -65,27 +65,21 @@ describe('anagramPuzzle reducer', () => {
   })
   it('swapChars: 文字を入れ替え', () => {
     // 入れ替える文字を指定してactionを発行すると
-    const action = swapChars({
+    const action = swapChars([{
+      questionId: '1',
+      charIndex: 0
+    }, {
       questionId: '1',
       charIndex: 1
-    })
+    }])
     const result = reducer({
       ...initialState,
       questions: [{
         id: '1',
         name: 'ギフシダネ',
         currentName: 'ギフシダネ',
-      }],
-      selectedChar: {
-        questionId: '1',
-        charIndex: 0
-      }
+      }]
     }, action)
-    // 選択中の文字がクリアされ
-    // todo: selectedCharベースにしちゃうとtestがfatになる
-    // 選択中に同じindexを選択すると、追加されちゃったり、バグの好きが多い
-    // 引数にする
-    expect(result.selectedChar).toEqual(null)
     // 文字が入れ替わる
     expect(result.questions[0]).toEqual({
       id: '1',
