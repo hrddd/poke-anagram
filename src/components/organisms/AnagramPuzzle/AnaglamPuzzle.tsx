@@ -3,6 +3,7 @@ import { SelectedAnagramPuzzle, SelectCharPayload } from '../../../redux/modules
 import { useDrag, useDrop, DropTargetMonitor, useDragLayer } from 'react-dnd'
 type Props = {
   questions: SelectedAnagramPuzzle['questions'],
+  existedQLength: number,
   isAllCorrect: boolean,
   handleOnClick: (e: React.MouseEvent<HTMLButtonElement>) => void,
   handleOnDrop: (arg: SelectCharPayload[]) => void
@@ -104,7 +105,7 @@ const Questions = (props: QuestionsProps) => {
 };
 
 const Component: React.SFC<Props> = (props) => {
-  const { questions, handleOnClick, isAllCorrect, handleOnDrop } = props;
+  const { questions, handleOnClick, existedQLength, isAllCorrect, handleOnDrop } = props;
   return (
     <>
       {questions.length > 0 && (<Questions
@@ -112,6 +113,8 @@ const Component: React.SFC<Props> = (props) => {
       />)}
       {isAllCorrect && (<div>
         全問正解！
+      </div>) || (<div>
+          あと{existedQLength}問
       </div>)}
     </>
   );

@@ -204,6 +204,7 @@ describe('anagramPuzzle selector', () => {
     expect(result).toEqual({
       questions: [],
       selectedChar: null,
+      currentQIndex: 0,
       isAllCorrect: false
     });
   })

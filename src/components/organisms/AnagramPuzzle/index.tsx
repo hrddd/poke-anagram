@@ -10,7 +10,7 @@ import { TouchBackend } from 'react-dnd-touch-backend';
 
 const Component: React.FC = () => {
   const dispatch = useDispatch();
-  const { questions, selectedChar, currentQIndex, isAllCorrect } = useSelector(selectAnagramPuzzle);
+  const { questions, selectedChar, currentQIndex, existedQLength, isAllCorrect } = useSelector(selectAnagramPuzzle);
   const [{ firstPokeData }, fetchData] = usePokeDex();
   const isTouchDevice = () => {
     return window.ontouchstart === null;
@@ -60,6 +60,7 @@ const Component: React.FC = () => {
     <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
       <AnagramPuzzleComponent
         questions={questions[currentQIndex] ? [questions[currentQIndex]] : []}
+        existedQLength={existedQLength}
         isAllCorrect={isAllCorrect}
         handleOnClick={handleOnClick}
         handleOnDrop={handleOnDrop}

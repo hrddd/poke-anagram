@@ -176,6 +176,8 @@ export const selectAnagramPuzzle = createSelector(
   ({ questions, selectedChar, correctQuestions }) => ({
     questions: generateQuestionViewData({ questions, selectedChar, correctQuestions }),
     selectedChar,
+    currentQIndex: correctQuestions.length,
+    existedQLength: questions.length - correctQuestions.length,
     isAllCorrect: correctQuestions.length === questions.length && questions.length !== 0
   })
 );
