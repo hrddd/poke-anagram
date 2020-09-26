@@ -6,11 +6,15 @@ import { usePokeDex } from "../../hooks/usePokeDex";
 import { useCallback } from 'react';
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { TouchBackend } from 'react-dnd-touch-backend';
 
 const Component: React.FC = () => {
   const dispatch = useDispatch();
   const { questions, selectedChar, isAllCorrect } = useSelector(selectAnagramPuzzle);
   const [{ firstPokeData }, fetchData] = usePokeDex();
+  const isTouchDevice = () => {
+    return window.ontouchstart === null;
+  }
 
   useEffect(() => {
     fetchData();
@@ -53,7 +57,7 @@ const Component: React.FC = () => {
   }, [dispatch])
 
   return (
-    <DndProvider backend={HTML5Backend}>
+    <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
       <AnagramPuzzleComponent
         questions={questions}
         isAllCorrect={isAllCorrect}

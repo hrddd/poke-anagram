@@ -1,7 +1,6 @@
 import * as React from "react";
 import { SelectedAnagramPuzzle, SelectCharPayload } from '../../../redux/modules/anagramPuzzle';
-import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd'
-
+import { useDrag, useDrop, DropTargetMonitor, useDragLayer } from 'react-dnd'
 type Props = {
   questions: SelectedAnagramPuzzle['questions'],
   isAllCorrect: boolean,
