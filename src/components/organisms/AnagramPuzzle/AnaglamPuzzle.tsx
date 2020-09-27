@@ -62,9 +62,11 @@ const Char = (props: CharProps) => {
     ref={ref}
     style={{
       border: '1px solid',
-      height: '40px',
-      width: '40px',
-      background: isSelected ? 'red' : 'gray',
+      borderRadius: '3px',
+      height: '60px',
+      width: '60px',
+      background: isSelected ? 'lightGreen' : 'white',
+      fontSize: '20px',
       opacity: opacity
     }}
     name={name}
@@ -80,11 +82,17 @@ type QuestionsProps = {
 }
 const Questions = (props: QuestionsProps) => {
   const { questions, handleOnClick, handleOnDrop } = props;
-  return (<ul>
+  return (<ul style={{
+    padding: 0,
+  }}>
     {questions.map((question) => (
       <li
         key={`Questions${question.id}`}
-        style={{ marginTop: '16px', background: question.isCorrect ? 'blue' : 'white' }}
+        style={{
+          listStyle: 'none',
+          marginTop: '16px',
+          background: question.isCorrect ? 'blue' : 'white'
+        }}
       >
         {question.chars.map((char, index) => (<Char
           key={`Questions${question.id}${index}`}
@@ -107,16 +115,23 @@ const Questions = (props: QuestionsProps) => {
 const Component: React.SFC<Props> = (props) => {
   const { questions, handleOnClick, existedQLength, isAllCorrect, handleOnDrop } = props;
   return (
-    <>
-      {questions.length > 0 && (<Questions
-        questions={questions} handleOnClick={handleOnClick} handleOnDrop={handleOnDrop}
-      />)}
+    <div style={{
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      textAlign: 'center'
+    }}>
       {isAllCorrect && (<div>
         全問正解！
       </div>) || (<div>
           あと{existedQLength}問
       </div>)}
-    </>
+      {questions.length > 0 && (<Questions
+        questions={questions} handleOnClick={handleOnClick} handleOnDrop={handleOnDrop}
+      />)}
+    </div>
   );
 };
 
