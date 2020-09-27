@@ -89,7 +89,7 @@ const generateQuestionData = (base: Base[]) => {
     return {
       id,
       name: shuffledName,
-      currentName: shuffledName
+      currentName: shuffledName,
     }
   })
 }
@@ -165,6 +165,7 @@ const generateQuestionViewData = ({
 }) => {
   return questions.map((question) => ({
     id: question.id,
+    name: question.name,
     chars: question.currentName.split('').map((char, idx) => ({
       char,
       isSelected: selectedChar?.questionId === question.id && selectedChar.charIndex === idx

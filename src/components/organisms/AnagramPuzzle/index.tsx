@@ -62,6 +62,7 @@ const Component: React.FC = () => {
         questions={questions[currentQIndex] ? [questions[currentQIndex]] : []}
         existedQLength={existedQLength}
         isAllCorrect={isAllCorrect}
+        nextQ={questions[currentQIndex + 1] ? questions[currentQIndex + 1].name : 'コレが最後の問題です'}
         handleOnClick={handleOnClick}
         handleOnDrop={handleOnDrop}
       />

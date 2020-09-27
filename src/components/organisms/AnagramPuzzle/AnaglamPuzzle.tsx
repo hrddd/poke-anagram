@@ -1,10 +1,12 @@
 import * as React from "react";
 import { SelectedAnagramPuzzle, SelectCharPayload } from '../../../redux/modules/anagramPuzzle';
 import { useDrag, useDrop, DropTargetMonitor, useDragLayer } from 'react-dnd'
+import { AnagramPuzzleStatus } from "./AnagramPuzzleStatus";
 type Props = {
   questions: SelectedAnagramPuzzle['questions'],
   existedQLength: number,
   isAllCorrect: boolean,
+  nextQ: string,
   handleOnClick: (e: React.MouseEvent<HTMLButtonElement>) => void,
   handleOnDrop: (arg: SelectCharPayload[]) => void
 };
@@ -113,7 +115,7 @@ const Questions = (props: QuestionsProps) => {
 };
 
 const Component: React.SFC<Props> = (props) => {
-  const { questions, handleOnClick, existedQLength, isAllCorrect, handleOnDrop } = props;
+  const { questions, handleOnClick, existedQLength, isAllCorrect, handleOnDrop, nextQ } = props;
   return (
     <div style={{
       height: '100vh',
@@ -123,14 +125,15 @@ const Component: React.SFC<Props> = (props) => {
       justifyContent: 'center',
       textAlign: 'center'
     }}>
-      {isAllCorrect && (<div>
-        全問正解！
-      </div>) || (<div>
-          あと{existedQLength}問
-      </div>)}
       {questions.length > 0 && (<Questions
         questions={questions} handleOnClick={handleOnClick} handleOnDrop={handleOnDrop}
       />)}
+      {isAllCorrect && (<div>
+        全問正解！
+      </div>) || (<AnagramPuzzleStatus
+          existedQLength={existedQLength}
+          nextQ={nextQ}
+        />)}
     </div>
   );
 };
