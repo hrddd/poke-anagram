@@ -205,6 +205,7 @@ describe('anagramPuzzle selector', () => {
       questions: [],
       selectedChar: null,
       currentQIndex: 0,
+      existedQLength: 0,
       isAllCorrect: false
     });
   })
