@@ -114,6 +114,7 @@ export const reducer = reducerWithInitialState(initialState)
     }
   })
   .case(swapChars, (state, targetChars) => {
+    // 同じ問題の中で、別の文字が選択されていた場合
     if (
       targetChars.length !== 2
       || targetChars[0].questionId !== targetChars[1].questionId
@@ -130,6 +131,7 @@ export const reducer = reducerWithInitialState(initialState)
         ...questions.slice(0, targetQIndex),
         {
           ...targetQ,
+          // 文字を入れ替える
           currentName: swap(
             targetQ.currentName.split(''),
             targetChars[0].charIndex,
