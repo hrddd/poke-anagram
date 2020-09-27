@@ -129,8 +129,7 @@ export const reducer = reducerWithInitialState(initialState)
       questions: [
         ...questions.slice(0, targetQIndex),
         {
-          id: targetQ.id,
-          name: targetQ.name,
+          ...targetQ,
           currentName: swap(
             targetQ.currentName.split(''),
             targetChars[0].charIndex,
