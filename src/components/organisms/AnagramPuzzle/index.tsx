@@ -7,6 +7,7 @@ import { useCallback } from 'react';
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
+import { AnagramPuzzleStatus } from "./AnagramPuzzleStatus";
 
 const Component: React.FC = () => {
   const dispatch = useDispatch();
@@ -57,16 +58,30 @@ const Component: React.FC = () => {
   }, [dispatch])
 
   return (
-    <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
-      <AnagramPuzzleComponent
-        questions={questions[currentQIndex] ? [questions[currentQIndex]] : []}
-        existedQLength={existedQLength}
-        isAllCorrect={isAllCorrect}
-        nextQ={questions[currentQIndex + 1] ? questions[currentQIndex + 1].name : 'コレが最後の問題です'}
-        handleOnClick={handleOnClick}
-        handleOnDrop={handleOnDrop}
-      />
-    </DndProvider>);
+    <div style={{
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      textAlign: 'center'
+    }}>
+      <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
+        <AnagramPuzzleComponent
+          questions={questions[currentQIndex] ? [questions[currentQIndex]] : []}
+          handleOnClick={handleOnClick}
+          handleOnDrop={handleOnDrop}
+        />
+      </DndProvider>
+      {isAllCorrect
+        && (<div>
+          全問正解！
+      </div>)
+        || (<AnagramPuzzleStatus
+          existedQLength={existedQLength}
+          nextQ={questions[currentQIndex + 1] ? questions[currentQIndex + 1].name : 'コレが最後の問題です'}
+        />)}
+    </div>);
 };
 
 export const AnagramPuzzle = Component;
