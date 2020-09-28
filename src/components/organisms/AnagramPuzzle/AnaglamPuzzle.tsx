@@ -113,13 +113,9 @@ const Questions = (props: QuestionsProps) => {
 
 const Component: React.SFC<Props> = (props) => {
   const { questions, handleOnClick, handleOnDrop } = props;
-  return (
-    <div>
-      {questions.length > 0 && (<Questions
-        questions={questions} handleOnClick={handleOnClick} handleOnDrop={handleOnDrop}
-      />)}
-    </div>
-  );
+  return (<Questions
+    questions={questions} handleOnClick={handleOnClick} handleOnDrop={handleOnDrop}
+  />);
 };
 
 export const AnagramPuzzleComponent = React.memo(Component);

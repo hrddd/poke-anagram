@@ -66,13 +66,16 @@ const Component: React.FC = () => {
       justifyContent: 'center',
       textAlign: 'center'
     }}>
-      <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
-        <AnagramPuzzleComponent
-          questions={questions[currentQIndex] ? [questions[currentQIndex]] : []}
-          handleOnClick={handleOnClick}
-          handleOnDrop={handleOnDrop}
-        />
-      </DndProvider>
+      {questions.length > 0 && (
+        <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
+          <AnagramPuzzleComponent
+            // TODO: questionsのlengthは1個以上、と規定したい
+            questions={[questions[currentQIndex]]}
+            handleOnClick={handleOnClick}
+            handleOnDrop={handleOnDrop}
+          />
+        </DndProvider>
+      )}
       {isAllCorrect
         && (<div>
           全問正解！
