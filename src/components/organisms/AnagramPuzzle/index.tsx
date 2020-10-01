@@ -8,6 +8,7 @@ import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import { AnagramPuzzleStatus } from "./AnagramPuzzleStatus";
+import { Item } from "../../hooks/useSortableItem";
 
 const Component: React.FC = () => {
   const dispatch = useDispatch();
@@ -26,7 +27,7 @@ const Component: React.FC = () => {
     dispatch(createQuestion(firstPokeData.slice(0, 2)));
   }, [dispatch, firstPokeData])
 
-  const handleOnClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     const questionId = e.currentTarget.name
     const charIndex = Number(e.currentTarget.value)
     const currentSelectedChar: SelectCharPayload = {
@@ -48,11 +49,17 @@ const Component: React.FC = () => {
     }
   }, [dispatch, selectedChar])
 
-  const handleOnDrop = useCallback(([
+  const handleDrop = useCallback(([
     before,
     after,
-  ]: SelectCharPayload[]) => {
-    dispatch(swapChars([before, after]))
+  ]: [Item, Item]) => {
+    dispatch(swapChars([{
+      questionId: before.id,
+      charIndex: before.index
+    }, {
+      questionId: after.id,
+      charIndex: after.index
+    }]))
     dispatch(checkAnswers())
     dispatch(deselectChar())
   }, [dispatch])
@@ -71,8 +78,8 @@ const Component: React.FC = () => {
           <AnagramPuzzleComponent
             // TODO: questionsのlengthは1個以上、と規定したい
             questions={[questions[currentQIndex]]}
-            handleOnClick={handleOnClick}
-            handleOnDrop={handleOnDrop}
+            handleClick={handleClick}
+            handleDrop={handleDrop}
           />
         </DndProvider>
       )}
