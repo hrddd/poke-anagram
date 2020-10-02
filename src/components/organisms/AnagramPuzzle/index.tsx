@@ -73,24 +73,29 @@ const Component: React.FC = () => {
       justifyContent: 'center',
       textAlign: 'center'
     }}>
-      {questions.length > 0 && (
-        <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
-          <AnagramPuzzleComponent
-            // TODO: questionsのlengthは1個以上、と規定したい
-            questions={[questions[currentQIndex]]}
-            handleClick={handleClick}
-            handleDrop={handleDrop}
-          />
-        </DndProvider>
-      )}
       {isAllCorrect
         && (<div>
           全問正解！
       </div>)
-        || (<AnagramPuzzleStatus
-          existedQLength={existedQLength}
-          nextQ={questions[currentQIndex + 1] ? questions[currentQIndex + 1].name : 'コレが最後の問題です'}
-        />)}
+        || questions.length > 0 && (
+          <>
+            <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
+              <AnagramPuzzleComponent
+                // TODO: questionsのlengthは1個以上、と規定したい
+                // TODO: 最後の問題に回答し終わった際に、currentQIndexをcorrectQuestions.lengthから出しているため、
+                // 存在しないエラー。元々、全問正解時には表出しないので、分岐で逃げるが
+                // そもそもcurrentQIndexでココで絞り込んでるのがよくない
+                // あとContainerにもtestは必要に思う
+                questions={[questions[currentQIndex]]}
+                handleClick={handleClick}
+                handleDrop={handleDrop}
+              />
+            </DndProvider>
+            <AnagramPuzzleStatus
+              existedQLength={existedQLength}
+              nextQ={questions[currentQIndex + 1] ? questions[currentQIndex + 1].name : 'コレが最後の問題です'}
+            />
+          </>)}
     </div>);
 };
 
