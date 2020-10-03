@@ -2,6 +2,7 @@ import { reducerWithInitialState } from "typescript-fsa-reducers";
 import { createSelector } from "reselect";
 import { RootState } from "./reducer";
 import actionCreatorFactory from "typescript-fsa";
+import { start } from "repl";
 
 // util
 const shuffle = <T>([...array]: T[]): T[] => {
@@ -191,15 +192,23 @@ const generateQuestionViewData = ({
     isCorrect: correctQuestions.includes(question.id)
   }))
 }
+// かかった時間をdateオブジェクトから算出してmsで返す
+export const getResultTime = (startDate: NullableDate, endDate: NullableDate) => {
+  if (startDate === null || endDate === null) return null
+  if (endDate < startDate) {
+    throw new Error('Can you go back in time?')
+  }
+  return endDate.getTime() - startDate.getTime()
+}
 export const selectAnagramPuzzle = createSelector(
   (state: RootState) => state.ui.anagramPuzzle,
-  ({ questions, selectedChar, correctQuestions }) => ({
+  ({ questions, selectedChar, correctQuestions, startDate, endDate }) => ({
     questions: generateQuestionViewData({ questions, selectedChar, correctQuestions }),
     selectedChar,
     currentQIndex: correctQuestions.length,
     existedQLength: questions.length - correctQuestions.length,
     isAllCorrect: correctQuestions.length === questions.length && questions.length !== 0,
-    resultTime: null
+    resultTime: getResultTime(startDate, endDate)
   })
 );
 

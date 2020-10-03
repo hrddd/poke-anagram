@@ -1,4 +1,4 @@
-import { reducer, createQuestion, selectChar, deselectChar, swapChars, checkAnswers, selectAnagramPuzzle, startTimeAttack, finishTimeAttack } from '../anagramPuzzle';
+import { reducer, createQuestion, selectChar, deselectChar, swapChars, checkAnswers, selectAnagramPuzzle, startTimeAttack, finishTimeAttack, getResultTime } from '../anagramPuzzle';
 import { configureStore } from './configureMockStore';
 
 const initialState = {
@@ -6,7 +6,7 @@ const initialState = {
   questions: [],
   selectedChar: null,
   correctQuestions: [],
-  startDate: null
+  startDate: null,
   endDate: null
 };
 
@@ -233,6 +233,26 @@ describe('anagramPuzzle selector', () => {
         isAllCorrect: false,
         resultTime: null
       });
+    })
+  })
+  describe('getResultTime: タイムアタック結果の取得', () => {
+    const startDate = new Date('1995-12-17T03:24:00')
+    const endDate = new Date('1995-12-17T03:24:30')
+    const wrongEndDate = new Date('1995-12-17T03:23:00')
+    it('開始時刻と終了時刻から、かかった時間(ms)が算出できる', () => {
+      const resultTime = getResultTime(startDate, endDate)
+      expect(resultTime).toEqual(30000);
+    })
+    it('開始時刻より終了時刻が早ければ、エラーとなる', (done) => {
+      try {
+        getResultTime(startDate, wrongEndDate);
+      } catch {
+        done();
+      }
+    })
+    it('どちらかがnullならnullを返す', () => {
+      const resultTime = getResultTime(null, endDate)
+      expect(resultTime).toEqual(null);
     })
   })
 })
