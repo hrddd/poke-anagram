@@ -221,19 +221,18 @@ describe('anagramPuzzle reducer', () => {
   })
 })
 describe('anagramPuzzle selector', () => {
-  it('StateからAnagramPazzle画面用のPropsを取得できる', () => {
-    // createStoreし
-    const store = configureStore();
-    // selectAnagramPuzzleにstateが渡れば
-    const result = selectAnagramPuzzle(store.getState());
-    // データを返す
-    expect(result).toEqual({
-      questions: [],
-      selectedChar: null,
-      currentQIndex: 0,
-      existedQLength: 0,
-      isAllCorrect: false,
-      resultTime: null
-    });
+  describe('Props', () => {
+    it('StateからAnagramPazzle画面用のPropsを取得できる', () => {
+      const store = configureStore();
+      const result = selectAnagramPuzzle(store.getState());
+      expect(result).toEqual({
+        questions: [],
+        selectedChar: null,
+        currentQIndex: 0,
+        existedQLength: 0,
+        isAllCorrect: false,
+        resultTime: null
+      });
+    })
   })
 })
