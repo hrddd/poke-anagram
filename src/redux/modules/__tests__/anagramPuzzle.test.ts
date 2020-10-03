@@ -201,6 +201,12 @@ describe('anagramPuzzle reducer', () => {
       expect(correctQuestions.includes('20')).toBe(false)
     })
   })
+  describe('startTimeAttack: タイム計測スタート', () => {
+    it('開始した日時を記憶する', () => { })
+  })
+  describe('finishTimeAttack: タイム計測終了', () => {
+    it('開始した日時から、かかった時間を算出する', () => { })
+  })
 })
 describe('anagramPuzzle selector', () => {
   it('StateからAnagramPazzle画面用のPropsを取得できる', () => {
