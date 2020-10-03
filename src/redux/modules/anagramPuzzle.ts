@@ -50,6 +50,8 @@ export const selectChar = actionCreator<SelectCharPayload>("SELECT_CHAR");
 export const deselectChar = actionCreator("DESELECT_CHAR");
 export const swapChars = actionCreator<SelectCharPayload[]>("SWAP_CHAR");
 export const checkAnswers = actionCreator("CHECK_ANSWERS");
+export const startTimeAttack = actionCreator<Date>("START_TIME_ATTACK");
+export const finishTimeAttack = actionCreator<Date>("FINISH_TIME_ATTACK");
 
 // state
 type Base = {
@@ -73,6 +75,8 @@ type SelectedChar = {
   charIndex: number
 } | null
 
+type NullableDate = Date | null
+
 const initialState = {
   answers: {} as {
     [key in string]: Answer
@@ -80,6 +84,8 @@ const initialState = {
   questions: [] as Question[],
   selectedChar: null as SelectedChar,
   correctQuestions: [] as Question['id'][],
+  startDate: null as NullableDate,
+  endDate: null as NullableDate
 };
 
 // reducer
@@ -152,6 +158,18 @@ export const reducer = reducerWithInitialState(initialState)
       correctQuestions
     }
   })
+  .case(startTimeAttack, (state, startDate: Date = new Date()) => {
+    return {
+      ...state,
+      startDate
+    }
+  })
+  .case(finishTimeAttack, (state, endDate: Date = new Date()) => {
+    return {
+      ...state,
+      endDate
+    }
+  })
 
 // selector
 const generateQuestionViewData = ({
@@ -180,7 +198,8 @@ export const selectAnagramPuzzle = createSelector(
     selectedChar,
     currentQIndex: correctQuestions.length,
     existedQLength: questions.length - correctQuestions.length,
-    isAllCorrect: correctQuestions.length === questions.length && questions.length !== 0
+    isAllCorrect: correctQuestions.length === questions.length && questions.length !== 0,
+    resultTime: null
   })
 );
 

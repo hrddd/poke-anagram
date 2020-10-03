@@ -1,4 +1,4 @@
-import { reducer, createQuestion, selectChar, deselectChar, swapChars, checkAnswers, selectAnagramPuzzle } from '../anagramPuzzle';
+import { reducer, createQuestion, selectChar, deselectChar, swapChars, checkAnswers, selectAnagramPuzzle, startTimeAttack, finishTimeAttack } from '../anagramPuzzle';
 import { configureStore } from './configureMockStore';
 
 const initialState = {
@@ -6,6 +6,8 @@ const initialState = {
   questions: [],
   selectedChar: null,
   correctQuestions: [],
+  startDate: null
+  endDate: null
 };
 
 describe('anagramPuzzle reducer', () => {
@@ -202,10 +204,20 @@ describe('anagramPuzzle reducer', () => {
     })
   })
   describe('startTimeAttack: タイム計測スタート', () => {
-    it('開始した日時を記憶する', () => { })
+    it('開始した日時を記憶する', () => {
+      let startDate = new Date();
+      const action = startTimeAttack(startDate)
+      const result = reducer(undefined, action)
+      expect(result.startDate).toEqual(startDate)
+    })
   })
   describe('finishTimeAttack: タイム計測終了', () => {
-    it('開始した日時から、かかった時間を算出する', () => { })
+    it('終了した日時を記憶する', () => {
+      let endDate = new Date();
+      const action = finishTimeAttack(endDate)
+      const result = reducer(undefined, action)
+      expect(result.endDate).toEqual(endDate)
+    })
   })
 })
 describe('anagramPuzzle selector', () => {
@@ -220,7 +232,8 @@ describe('anagramPuzzle selector', () => {
       selectedChar: null,
       currentQIndex: 0,
       existedQLength: 0,
-      isAllCorrect: false
+      isAllCorrect: false,
+      resultTime: null
     });
   })
 })
