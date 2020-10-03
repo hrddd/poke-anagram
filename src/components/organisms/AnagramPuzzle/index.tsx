@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect } from "react";
 import { AnagramPuzzleComponent } from './AnaglamPuzzle';
-import { selectAnagramPuzzle, selectChar, SelectCharPayload, createQuestion, checkAnswers, swapChars, deselectChar } from '../../../redux/modules/anagramPuzzle';
+import { selectAnagramPuzzle, selectChar, SelectCharPayload, createQuestion, checkAnswers, swapChars, deselectChar, finishTimeAttack, startTimeAttack } from '../../../redux/modules/anagramPuzzle';
 import { usePokeDex } from "../../hooks/usePokeDex";
 import { useCallback } from 'react';
 import { DndProvider } from 'react-dnd'
@@ -12,7 +12,7 @@ import { Item } from "../../hooks/useSortableItem";
 
 const Component: React.FC = () => {
   const dispatch = useDispatch();
-  const { questions, selectedChar, currentQIndex, existedQLength, isAllCorrect } = useSelector(selectAnagramPuzzle);
+  const { questions, selectedChar, currentQIndex, existedQLength, isAllCorrect, resultTime } = useSelector(selectAnagramPuzzle);
   const [{ firstPokeData }, fetchData] = usePokeDex();
   const isTouchDevice = () => {
     return window.ontouchstart === null;
@@ -25,7 +25,14 @@ const Component: React.FC = () => {
   useEffect(() => {
     // TODO: 無駄に複数回走るので調整する
     dispatch(createQuestion(firstPokeData.slice(0, 2)));
+    dispatch(startTimeAttack(new Date()));
   }, [dispatch, firstPokeData])
+
+  useEffect(() => {
+    if (isAllCorrect) {
+      dispatch(finishTimeAttack(new Date()));
+    }
+  }, [dispatch, isAllCorrect])
 
   const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     const questionId = e.currentTarget.name
@@ -75,8 +82,9 @@ const Component: React.FC = () => {
     }}>
       {isAllCorrect
         && (<div>
-          全問正解！
-      </div>)
+          全問正解！<br />
+          {resultTime && `かかった時間は ${resultTime / 1000}秒 です`}
+        </div>)
         || questions.length > 0 && (
           <>
             <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
