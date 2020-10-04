@@ -1,4 +1,4 @@
-import { reducer, createQuestion, selectChar, deselectChar, swapChars, checkAnswers, selectAnagramPuzzle, startTimeAttack, finishTimeAttack, getResultTime } from '../anagramPuzzle';
+import { reducer, createQuestion, selectChar, deselectChar, swapChars, checkAnswers, selectAnagramPuzzle, startTimeAttack, finishTimeAttack, getResultTime, reset } from '../anagramPuzzle';
 import { configureStore } from './configureMockStore';
 
 const initialState = {
@@ -217,6 +217,20 @@ describe('anagramPuzzle reducer', () => {
       const action = finishTimeAttack(endDate)
       const result = reducer(undefined, action)
       expect(result.endDate).toEqual(endDate)
+    })
+  })
+  describe('reset: stateを初期化する', () => {
+    it('stateを初期化する', () => {
+      const action = reset()
+      const result = reducer({
+        ...initialState,
+        questions: [{
+          id: '1',
+          name: 'ギフシダネ',
+          currentName: 'フシギダネ',
+        }]
+      }, action)
+      expect(result).toEqual(initialState)
     })
   })
 })

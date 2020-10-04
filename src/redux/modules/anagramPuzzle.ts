@@ -52,6 +52,7 @@ export const swapChars = actionCreator<SelectCharPayload[]>("SWAP_CHAR");
 export const checkAnswers = actionCreator("CHECK_ANSWERS");
 export const startTimeAttack = actionCreator<Date>("START_TIME_ATTACK");
 export const finishTimeAttack = actionCreator<Date>("FINISH_TIME_ATTACK");
+export const reset = actionCreator("RESET");
 
 // state
 type Base = {
@@ -168,6 +169,11 @@ export const reducer = reducerWithInitialState(initialState)
     return {
       ...state,
       endDate
+    }
+  })
+  .case(reset, () => {
+    return {
+      ...initialState
     }
   })
 
