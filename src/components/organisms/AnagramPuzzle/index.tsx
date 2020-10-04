@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect } from "react";
 import { AnagramPuzzleComponent } from './AnaglamPuzzle';
-import { selectAnagramPuzzle, selectChar, SelectCharPayload, createQuestion, checkAnswers, swapChars, deselectChar, finishTimeAttack, startTimeAttack } from '../../../redux/modules/anagramPuzzle';
+import { selectAnagramPuzzle, selectChar, SelectCharPayload, createQuestion, checkAnswers, swapChars, deselectChar, finishTimeAttack, startTimeAttack, reset } from '../../../redux/modules/anagramPuzzle';
 import { usePokeDex } from "../../hooks/usePokeDex";
 import { useCallback } from 'react';
 import { DndProvider } from 'react-dnd'
@@ -71,6 +71,12 @@ const Component: React.FC = () => {
     dispatch(deselectChar())
   }, [dispatch])
 
+  const handleClickRetry = useCallback(() => {
+    dispatch(reset())
+    dispatch(createQuestion(firstPokeData.slice(0, 2)))
+    dispatch(startTimeAttack(new Date()))
+  }, [dispatch, firstPokeData])
+
   return (
     <div style={{
       height: '100vh',
@@ -82,8 +88,15 @@ const Component: React.FC = () => {
     }}>
       {isAllCorrect
         && (<div>
-          全問正解！<br />
+          全問正解！
+          <br />
+          <br />
           {resultTime && `かかった時間は ${resultTime / 1000}秒 です`}
+          <br />
+          <br />
+          <button onClick={handleClickRetry}>
+            retry!
+          </button>
         </div>)
         || questions.length > 0 && (
           <>
