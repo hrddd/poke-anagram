@@ -30,19 +30,18 @@ describe('anagramPuzzle reducer', () => {
       const result = reducer(undefined, action);
       expect(result.questions).toHaveLength(2);
     })
+    it('問題の順序はシャッフルされる', () => {/*WIP*/ })
     it('問題の長さを制限できる', () => {
       const action = createQuestion({ baseData, length: 1 });
       const result = reducer(undefined, action);
       expect(result.questions).toHaveLength(1);
     })
-    it('問題の答えをidで取得できる', () => {
-      const action = createQuestion({ baseData, length: 1 });
+    it('問題中の文字はシャッフルされている', () => {/*WIP*/ })
+    it('問題の答え(問題の元になった文字列)をidで取得できる', () => {
+      const action = createQuestion({ baseData });
       const result = reducer(undefined, action);
       const id = result.questions[0].id;
-      expect(result.answers[id]).toEqual({
-        id: '1',
-        name: 'フシギダネ'
-      });
+      expect(result.answers[id].name).toBeTruthy();
     })
   })
   describe('selectChar: 文字を選択', () => {

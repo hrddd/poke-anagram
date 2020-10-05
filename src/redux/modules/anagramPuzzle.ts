@@ -94,23 +94,21 @@ const initialState = {
 };
 
 // reducer
-const generateQuestionData = (base: Base[]) => {
-  return base.map(({ id, name }) => {
-    const shuffledName = shuffle<string>(name.split('')).join('');
-    return {
-      id,
-      name: shuffledName,
-      currentName: shuffledName,
-    }
-  })
-}
 export const reducer = reducerWithInitialState(initialState)
   .case(createQuestion, (state, { baseData, length }) => {
-    const slicedData = baseData.slice(0, length)
+    const slicedData = shuffle<Base>(baseData).slice(0, length)
+    const _createQuestion = ({ id, name: _name }: Base) => {
+      const name = shuffle<string>(_name.split('')).join('')
+      return {
+        id,
+        name,
+        currentName: name
+      }
+    }
     return {
       ...state,
       answers: normalizeById(slicedData),
-      questions: generateQuestionData(slicedData)
+      questions: slicedData.map(_createQuestion)
     }
   })
   .case(selectChar, (state, selectedChar) => {
