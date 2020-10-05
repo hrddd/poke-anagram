@@ -24,7 +24,10 @@ const Component: React.FC = () => {
 
   useEffect(() => {
     // TODO: 無駄に複数回走るので調整する
-    dispatch(createQuestion(firstPokeData.slice(0, 2)));
+    dispatch(createQuestion({
+      baseData: firstPokeData,
+      length: 2
+    }))
     dispatch(startTimeAttack(new Date()));
   }, [dispatch, firstPokeData])
 
@@ -73,7 +76,10 @@ const Component: React.FC = () => {
 
   const handleClickRetry = useCallback(() => {
     dispatch(reset())
-    dispatch(createQuestion(firstPokeData.slice(0, 2)))
+    dispatch(createQuestion({
+      baseData: firstPokeData,
+      length: 2
+    }))
     dispatch(startTimeAttack(new Date()))
   }, [dispatch, firstPokeData])
 

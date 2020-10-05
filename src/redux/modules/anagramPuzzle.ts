@@ -41,11 +41,15 @@ const normalizeById = <T extends NormalizeAbleById>([...array]: T[]): { [key: st
 
 // actions
 const actionCreator = actionCreatorFactory('anagramPuzzle');
+export type CreateQuestionPayload = {
+  baseData: Base[],
+  length?: number,
+}
 export type SelectCharPayload = {
   questionId: string,
   charIndex: number,
 }
-export const createQuestion = actionCreator<Base[]>("CREATE_QUESTION");
+export const createQuestion = actionCreator<CreateQuestionPayload>("CREATE_QUESTION");
 export const selectChar = actionCreator<SelectCharPayload>("SELECT_CHAR");
 export const deselectChar = actionCreator("DESELECT_CHAR");
 export const swapChars = actionCreator<SelectCharPayload[]>("SWAP_CHAR");
@@ -101,11 +105,12 @@ const generateQuestionData = (base: Base[]) => {
   })
 }
 export const reducer = reducerWithInitialState(initialState)
-  .case(createQuestion, (state, baseData) => {
+  .case(createQuestion, (state, { baseData, length }) => {
+    const slicedData = baseData.slice(0, length)
     return {
       ...state,
-      answers: normalizeById(baseData),
-      questions: generateQuestionData(baseData)
+      answers: normalizeById(slicedData),
+      questions: generateQuestionData(slicedData)
     }
   })
   .case(selectChar, (state, selectedChar) => {

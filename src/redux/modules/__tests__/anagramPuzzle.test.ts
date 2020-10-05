@@ -18,27 +18,31 @@ describe('anagramPuzzle reducer', () => {
     })
   })
   describe('createQuestion: 問題を作成', () => {
-    it('ベースのデータから、問題と答えを生成できる', () => {
-      const baseData = [{
+    const baseData = [{
+      id: '1',
+      name: 'フシギダネ'
+    }, {
+      id: '20',
+      name: 'クチート'
+    }];
+    it('問題を生成できる', () => {
+      const action = createQuestion({ baseData });
+      const result = reducer(undefined, action);
+      expect(result.questions).toHaveLength(2);
+    })
+    it('問題の長さを制限できる', () => {
+      const action = createQuestion({ baseData, length: 1 });
+      const result = reducer(undefined, action);
+      expect(result.questions).toHaveLength(1);
+    })
+    it('問題の答えをidで取得できる', () => {
+      const action = createQuestion({ baseData, length: 1 });
+      const result = reducer(undefined, action);
+      const id = result.questions[0].id;
+      expect(result.answers[id]).toEqual({
         id: '1',
         name: 'フシギダネ'
-      }, {
-        id: '20',
-        name: 'クチート'
-      }];
-      const action = createQuestion(baseData);
-      const result = reducer(undefined, action);
-      expect(result.answers).toEqual({
-        '1': {
-          id: '1',
-          name: 'フシギダネ'
-        },
-        '20': {
-          id: '20',
-          name: 'クチート'
-        }
       });
-      expect(result.questions).toHaveLength(2);
     })
   })
   describe('selectChar: 文字を選択', () => {
