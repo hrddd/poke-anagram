@@ -57,6 +57,7 @@ export const checkAnswers = actionCreator("CHECK_ANSWERS");
 export const startTimeAttack = actionCreator<Date>("START_TIME_ATTACK");
 export const finishTimeAttack = actionCreator<Date>("FINISH_TIME_ATTACK");
 export const reset = actionCreator("RESET");
+export const setQuestionLength = actionCreator<number>("SET_QUESTION_LENGTH");
 
 // state
 type Base = {
@@ -87,6 +88,7 @@ const initialState = {
     [key in string]: Answer
   },
   questions: [] as Question[],
+  inputQuestionLength: 1,
   selectedChar: null as SelectedChar,
   correctQuestions: [] as Question['id'][],
   startDate: null as NullableDate,
@@ -179,6 +181,12 @@ export const reducer = reducerWithInitialState(initialState)
       ...initialState
     }
   })
+  .case(setQuestionLength, (state, length: number) => {
+    return {
+      ...state,
+      inputQuestionLength: length
+    }
+  })
 
 // selector
 const generateQuestionViewData = ({
@@ -210,13 +218,15 @@ export const getResultTime = (startDate: NullableDate, endDate: NullableDate) =>
 }
 export const selectAnagramPuzzle = createSelector(
   (state: RootState) => state.ui.anagramPuzzle,
-  ({ questions, selectedChar, correctQuestions, startDate, endDate }) => ({
+  ({ questions, selectedChar, correctQuestions, startDate, endDate, inputQuestionLength }) => ({
     questions: generateQuestionViewData({ questions, selectedChar, correctQuestions }),
     selectedChar,
     currentQIndex: correctQuestions.length,
     existedQLength: questions.length - correctQuestions.length,
     isAllCorrect: correctQuestions.length === questions.length && questions.length !== 0,
-    resultTime: getResultTime(startDate, endDate)
+    resultTime: getResultTime(startDate, endDate),
+    needsInitialize: questions.length === 0,
+    inputQuestionLength,
   })
 );
 

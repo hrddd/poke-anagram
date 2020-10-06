@@ -1,4 +1,4 @@
-import { reducer, createQuestion, selectChar, deselectChar, swapChars, checkAnswers, selectAnagramPuzzle, startTimeAttack, finishTimeAttack, getResultTime, reset } from '../anagramPuzzle';
+import { reducer, createQuestion, selectChar, deselectChar, swapChars, checkAnswers, selectAnagramPuzzle, startTimeAttack, finishTimeAttack, getResultTime, reset, setQuestionLength } from '../anagramPuzzle';
 import { configureStore } from './configureMockStore';
 
 const initialState = {
@@ -7,7 +7,8 @@ const initialState = {
   selectedChar: null,
   correctQuestions: [],
   startDate: null,
-  endDate: null
+  endDate: null,
+  inputQuestionLength: 1,
 };
 
 describe('anagramPuzzle reducer', () => {
@@ -236,6 +237,13 @@ describe('anagramPuzzle reducer', () => {
       expect(result).toEqual(initialState)
     })
   })
+  describe('setQuestionLength: 問題の長さを入力', () => {
+    it('入力中の問題の長さをstoreで保持', () => {
+      const action = setQuestionLength(10)
+      const result = reducer(undefined, action)
+      expect(result.inputQuestionLength).toBe(10)
+    })
+  })
 })
 describe('anagramPuzzle selector', () => {
   describe('Props', () => {
@@ -248,7 +256,9 @@ describe('anagramPuzzle selector', () => {
         currentQIndex: 0,
         existedQLength: 0,
         isAllCorrect: false,
-        resultTime: null
+        resultTime: null,
+        needsInitialize: true,
+        inputQuestionLength: 1,
       });
     })
   })

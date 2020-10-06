@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect } from "react";
 import { AnagramPuzzleComponent } from './AnaglamPuzzle';
-import { selectAnagramPuzzle, selectChar, SelectCharPayload, createQuestion, checkAnswers, swapChars, deselectChar, finishTimeAttack, startTimeAttack, reset } from '../../../redux/modules/anagramPuzzle';
+import { selectAnagramPuzzle, selectChar, SelectCharPayload, createQuestion, checkAnswers, swapChars, deselectChar, finishTimeAttack, startTimeAttack, reset, setQuestionLength } from '../../../redux/modules/anagramPuzzle';
 import { usePokeDex } from "../../hooks/usePokeDex";
 import { useCallback } from 'react';
 import { DndProvider } from 'react-dnd'
@@ -12,7 +12,7 @@ import { Item } from "../../hooks/useSortableItem";
 
 const Component: React.FC = () => {
   const dispatch = useDispatch();
-  const { questions, selectedChar, currentQIndex, existedQLength, isAllCorrect, resultTime } = useSelector(selectAnagramPuzzle);
+  const { questions, inputQuestionLength, selectedChar, currentQIndex, existedQLength, isAllCorrect, resultTime, needsInitialize } = useSelector(selectAnagramPuzzle);
   const [{ firstPokeData }, fetchData] = usePokeDex();
   const isTouchDevice = () => {
     return window.ontouchstart === null;
@@ -21,15 +21,6 @@ const Component: React.FC = () => {
   useEffect(() => {
     fetchData();
   }, [fetchData])
-
-  useEffect(() => {
-    // TODO: 無駄に複数回走るので調整する
-    dispatch(createQuestion({
-      baseData: firstPokeData,
-      length: 2
-    }))
-    dispatch(startTimeAttack(new Date()));
-  }, [dispatch, firstPokeData])
 
   useEffect(() => {
     if (isAllCorrect) {
@@ -74,14 +65,18 @@ const Component: React.FC = () => {
     dispatch(deselectChar())
   }, [dispatch])
 
-  const handleClickRetry = useCallback(() => {
+  const handleClickStart = useCallback(() => {
     dispatch(reset())
     dispatch(createQuestion({
       baseData: firstPokeData,
-      length: 2
+      length: inputQuestionLength
     }))
     dispatch(startTimeAttack(new Date()))
-  }, [dispatch, firstPokeData])
+  }, [dispatch, firstPokeData, inputQuestionLength])
+
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(setQuestionLength(parseInt(e.currentTarget.value)))
+  }, [dispatch])
 
   return (
     <div style={{
@@ -100,11 +95,38 @@ const Component: React.FC = () => {
           {resultTime && `かかった時間は ${resultTime / 1000}秒 です`}
           <br />
           <br />
-          <button onClick={handleClickRetry}>
+          <input
+            type="range"
+            min="1"
+            max={firstPokeData.length}
+            value={inputQuestionLength}
+            onChange={handleChange}
+          />
+          <br />
+          {inputQuestionLength}問
+          <br />
+          <button onClick={handleClickStart}>
             retry!
           </button>
         </div>)
-        || questions.length > 0 && (
+        || needsInitialize && (
+          <>
+            <input
+              type="range"
+              min="1"
+              max={firstPokeData.length}
+              value={inputQuestionLength}
+              onChange={handleChange}
+            />
+            <br />
+            {inputQuestionLength}問
+            <br />
+            <button onClick={handleClickStart}>
+              ゲームを始める
+            </button>
+          </>
+        )
+        || !needsInitialize && (
           <>
             <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
               <AnagramPuzzleComponent
