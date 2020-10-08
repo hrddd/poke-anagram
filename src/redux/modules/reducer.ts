@@ -1,5 +1,6 @@
 import { combineReducers } from "redux";
 import { reducer as anagramPuzzle } from './anagramPuzzle';
+import { reducer as loadingModal } from './loadingModal';
 import { pokeData } from './pokeData';
 
 const rootReducer = combineReducers({
@@ -7,7 +8,8 @@ const rootReducer = combineReducers({
     pokeData
   }),
   ui: combineReducers({
-    anagramPuzzle
+    anagramPuzzle,
+    loadingModal
   }),
 });
 
