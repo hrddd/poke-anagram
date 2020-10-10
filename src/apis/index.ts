@@ -20,4 +20,10 @@ export const getErrorMessage = (e: any) => {
   }
 }
 
-export const loadPokeDex = async () => getJSON<PokeDex>({ url: '/pokedex.json' });
+export const loadPokeDex = async () => {
+  // mock
+  await new Promise((resolve) => {
+    setTimeout(() => { resolve() }, 1000)
+  })
+  return getJSON<PokeDex>({ url: '/pokedex.json' })
+};

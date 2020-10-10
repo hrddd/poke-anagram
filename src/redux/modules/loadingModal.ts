@@ -5,7 +5,7 @@ import actionCreatorFactory from "typescript-fsa";
 
 // actions
 const actionCreator = actionCreatorFactory('loadingModal');
-
+// TODO: 名前が一般的すぎてimportのバッティングが懸念。問題あったら即直し
 export const open = actionCreator("OPEN");
 export const close = actionCreator("CLOSE");
 

@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchPokeData, selectPokeData } from '../../redux/modules/pokeData';
 import { useCallback } from 'react';
 import { loadPokeDex, getErrorMessage } from '../../apis/index';
+import { open, close } from "../../redux/modules/loadingModal"
 
 export const usePokeDex = () => {
   const dispatch = useDispatch();
@@ -9,6 +10,7 @@ export const usePokeDex = () => {
   const fetchData = useCallback(async () => {
     const params = 'Please Give Me Pokemons...';
     dispatch(fetchPokeData.started(params));
+    dispatch(open());
     try {
       const result = await loadPokeDex();
       dispatch(fetchPokeData.done({
@@ -20,6 +22,8 @@ export const usePokeDex = () => {
         params,
         error: getErrorMessage(e)
       }));
+    } finally {
+      dispatch(close());
     }
   }, [dispatch]);
 
