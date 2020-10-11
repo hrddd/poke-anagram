@@ -1,6 +1,6 @@
 import * as React from "react";
 import { SelectedAnagramPuzzle } from '../../../redux/modules/anagramPuzzle';
-import { useSortableItem, Item } from '../../hooks/useSortableItem';
+import { useSwapableItem, Item } from '../../hooks/useSwapableItem';
 
 type Props = {
   questions: SelectedAnagramPuzzle['questions'],
@@ -20,7 +20,7 @@ const Char = (props: CharProps) => {
   const { isSelected, char, handleClick, name, value, handleDrop } = props;
   const [{
     isDragging,
-  }, ref] = useSortableItem({
+  }, ref] = useSwapableItem({
     type: 'Char',
     id: name,
     index: value,

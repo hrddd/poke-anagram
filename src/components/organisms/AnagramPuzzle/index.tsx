@@ -8,7 +8,7 @@ import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import { AnagramPuzzleStatus } from "./AnagramPuzzleStatus";
-import { Item } from "../../hooks/useSortableItem";
+import { Item } from "../../hooks/useSwapableItem";
 
 const Component: React.FC = () => {
   const dispatch = useDispatch();

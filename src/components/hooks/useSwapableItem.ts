@@ -9,7 +9,7 @@ export type Item = {
   index: number
   id: string
 };
-export const useSortableItem = ({
+export const useSwapableItem = ({
   type,
   id,
   index,
