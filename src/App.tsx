@@ -1,12 +1,12 @@
 import * as React from "react";
-import { AnagramPuzzle } from "./components/organisms/AnagramPuzzle";
 import { LoadingModal } from "./components/organisms/LoadingModal";
+import { AnagramPuzzlePage } from "./components/organisms/AnagramPuzzle";
 
 class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <AnagramPuzzle />
+        <AnagramPuzzlePage />
         <LoadingModal />
       </div>
     );
