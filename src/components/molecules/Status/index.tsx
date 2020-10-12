@@ -4,7 +4,7 @@ type Props = {
   nextQ: string,
 };
 
-const Component: React.SFC<Props> = (props) => {
+export const Status: React.SFC<Props> = (props) => {
   const { existedQLength, nextQ } = props;
   return (
 
@@ -18,5 +18,3 @@ const Component: React.SFC<Props> = (props) => {
     </div >
   );
 };
-
-export const AnagramPuzzleStatus = React.memo(Component);

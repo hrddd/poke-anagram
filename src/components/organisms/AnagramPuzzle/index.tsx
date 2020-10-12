@@ -7,8 +7,8 @@ import { useCallback } from 'react';
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
-import { AnagramPuzzleStatus } from "./AnagramPuzzleStatus";
 import { Item } from "../../hooks/useSwapableItem";
+import { Status } from '../../molecules/Status/index';
 
 const Component: React.FC = () => {
   const dispatch = useDispatch();
@@ -140,7 +140,7 @@ const Component: React.FC = () => {
                 handleDrop={handleDrop}
               />
             </DndProvider>
-            <AnagramPuzzleStatus
+            <Status
               existedQLength={existedQLength}
               nextQ={questions[currentQIndex + 1] ? questions[currentQIndex + 1].name : 'コレが最後の問題です'}
             />
