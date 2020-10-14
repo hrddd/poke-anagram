@@ -8,6 +8,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import { Item } from '../../hooks/useSwapableItem';
 import { Status } from '../../molecules/Status/index';
+import { useHistory } from "react-router-dom";
 
 const Component: React.FC = () => {
   const dispatch = useDispatch();
@@ -15,12 +16,17 @@ const Component: React.FC = () => {
   const isTouchDevice = () => {
     return window.ontouchstart === null;
   }
+  const history = useHistory();
 
+  // TODO: useEffectじゃない方がいい
+  // updateの後、render評価後になるので
+  // middlewareがいいかな、、、
   useEffect(() => {
     if (isAllCorrect) {
       dispatch(finishTimeAttack(new Date()));
+      history.push("/end")
     }
-  }, [dispatch, isAllCorrect])
+  }, [dispatch, history, isAllCorrect])
 
   const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     const questionId = e.currentTarget.name

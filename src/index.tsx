@@ -7,12 +7,19 @@ import * as serviceWorker from "./serviceWorker";
 import "./index.css";
 
 ReactDOM.render(
-  (<>
+  (<div style={{
+    height: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center'
+  }}>
     <Provider store={store}>
       <App />
     </Provider>
     <div id="modal"></div>
-  </>),
+  </div>),
   document.getElementById("root") as HTMLElement
 );
 
