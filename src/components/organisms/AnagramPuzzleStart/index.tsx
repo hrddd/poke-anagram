@@ -5,6 +5,7 @@ import { selectAnagramPuzzle, createQuestion, startTimeAttack, reset, setQuestio
 import { usePokeDex } from "../../hooks/usePokeDex";
 import { useCallback } from 'react';
 import { useHistory } from "react-router-dom";
+import { LoadingModal } from "../LoadingModal";
 
 const Component: React.FC = () => {
   const dispatch = useDispatch();
@@ -30,12 +31,15 @@ const Component: React.FC = () => {
     dispatch(setQuestionLength(parseInt(e.currentTarget.value)))
   }, [dispatch])
 
-  return (<AnagramPuzzleStartComponent
-    max={firstPokeData.length}
-    currentLength={inputQuestionLength}
-    handleChange={handleChange}
-    handleClick={handleClick}
-  />);
+  return (<>
+    <AnagramPuzzleStartComponent
+      max={firstPokeData.length}
+      currentLength={inputQuestionLength}
+      handleChange={handleChange}
+      handleClick={handleClick}
+    />
+    <LoadingModal />
+  </>);
 };
 
 export const AnagramPuzzleStart = Component;
