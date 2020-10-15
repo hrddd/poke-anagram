@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import React from "react";
+import React, { useEffect } from "react";
 import { AnagramPuzzleEndComponent } from './AnagramPuzzleEnd';
 import { selectAnagramPuzzle, createQuestion, startTimeAttack, reset, setQuestionLength } from '../../../redux/modules/anagramPuzzle';
 import { usePokeDex } from "../../hooks/usePokeDex";
@@ -8,9 +8,15 @@ import { useHistory } from "react-router-dom";
 
 const Component: React.FC = () => {
   const dispatch = useDispatch();
-  const { inputQuestionLength, resultTime } = useSelector(selectAnagramPuzzle);
+  const { questions, inputQuestionLength, resultTime } = useSelector(selectAnagramPuzzle);
   const [{ firstPokeData }] = usePokeDex();
   const history = useHistory();
+
+  useEffect(() => {
+    if (questions.length === 0) {
+      history.push("/")
+    }
+  }, [history, questions])
 
   const handleClick = useCallback(() => {
     dispatch(reset())
@@ -19,7 +25,7 @@ const Component: React.FC = () => {
       length: inputQuestionLength
     }))
     dispatch(startTimeAttack(new Date()))
-    history.push('/')
+    history.push('/anagram')
   }, [dispatch, firstPokeData, history, inputQuestionLength])
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {

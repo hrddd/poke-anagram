@@ -13,10 +13,10 @@ class App extends React.Component {
     return (
       <Router>
         <Switch>
-          <Route path="/start">
+          <Route exact path="/">
             <AnagramPuzzleStartPage />
           </Route>
-          <Route exact path="/">
+          <Route path="/anagram">
             <AnagramPuzzleMainPage />
           </Route>
           <Route path="/end">

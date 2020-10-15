@@ -28,6 +28,12 @@ const Component: React.FC = () => {
     }
   }, [dispatch, history, isAllCorrect])
 
+  useEffect(() => {
+    if (questions.length === 0) {
+      history.push("/")
+    }
+  }, [history, questions])
+
   const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     const questionId = e.currentTarget.name
     const charIndex = Number(e.currentTarget.value)
@@ -66,7 +72,8 @@ const Component: React.FC = () => {
   }, [dispatch])
 
   return (
-    <>
+    questions.length !== 0 &&
+    (<>
       <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
         <AnagramPuzzleComponent
           // TODO: questionsのlengthは1個以上、と規定したい
@@ -83,7 +90,8 @@ const Component: React.FC = () => {
         existedQLength={existedQLength}
         nextQ={questions[currentQIndex + 1] ? questions[currentQIndex + 1].name : 'コレが最後の問題です'}
       />
-    </>);
+    </>) || null
+  );
 };
 
 export const AnagramPuzzleMain = Component;

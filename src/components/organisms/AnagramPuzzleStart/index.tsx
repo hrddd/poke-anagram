@@ -24,22 +24,23 @@ const Component: React.FC = () => {
       length: inputQuestionLength
     }))
     dispatch(startTimeAttack(new Date()))
-    history.push("/")
+    history.push("/anagram")
   }, [dispatch, firstPokeData, history, inputQuestionLength])
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setQuestionLength(parseInt(e.currentTarget.value)))
   }, [dispatch])
 
-  return (<>
-    <AnagramPuzzleStartComponent
+  return (
+    (firstPokeData.length === 0
+      && (<LoadingModal />))
+    || (<AnagramPuzzleStartComponent
       max={firstPokeData.length}
       currentLength={inputQuestionLength}
       handleChange={handleChange}
       handleClick={handleClick}
-    />
-    <LoadingModal />
-  </>);
+    />)
+  );
 };
 
 export const AnagramPuzzleStart = Component;
