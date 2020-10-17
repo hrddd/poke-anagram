@@ -247,7 +247,7 @@ describe('anagramPuzzle reducer', () => {
 })
 
 describe('anagramPuzzle selector', () => {
-  describe('AnagramPazzle画面用', () => {
+  describe('AnagramPuzzle画面用', () => {
     it('StateからPropsを取得できる', () => {
       const store = configureStore();
       const result = selectAnagramPuzzle(store.getState());
