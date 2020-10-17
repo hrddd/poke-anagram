@@ -5,18 +5,13 @@ import { selectAnagramPuzzle, createQuestion, startTimeAttack, reset, setQuestio
 import { usePokeDex } from "../../hooks/usePokeDex";
 import { useCallback } from 'react';
 import { useHistory } from "react-router-dom";
+import { PLAY_PATH } from "../../../App";
 
 const Component: React.FC = () => {
   const dispatch = useDispatch();
-  const { questions, inputQuestionLength, resultTime } = useSelector(selectAnagramPuzzle);
+  const { inputQuestionLength, resultTime } = useSelector(selectAnagramPuzzle);
   const [{ firstPokeData }] = usePokeDex();
   const history = useHistory();
-
-  useEffect(() => {
-    if (questions.length === 0) {
-      history.push("/")
-    }
-  }, [history, questions])
 
   const handleClick = useCallback(() => {
     dispatch(reset())
@@ -25,7 +20,7 @@ const Component: React.FC = () => {
       length: inputQuestionLength
     }))
     dispatch(startTimeAttack(new Date()))
-    history.push('/anagram')
+    history.push(PLAY_PATH)
   }, [dispatch, firstPokeData, history, inputQuestionLength])
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {

@@ -9,6 +9,7 @@ import { TouchBackend } from 'react-dnd-touch-backend';
 import { Item } from '../../hooks/useSwapableItem';
 import { Status } from '../../molecules/Status/index';
 import { useHistory } from "react-router-dom";
+import { END_PATH } from '../../../App';
 
 const Component: React.FC = () => {
   const dispatch = useDispatch();
@@ -24,15 +25,9 @@ const Component: React.FC = () => {
   useEffect(() => {
     if (isAllCorrect) {
       dispatch(finishTimeAttack(new Date()));
-      history.push("/end")
+      history.push(END_PATH)
     }
   }, [dispatch, history, isAllCorrect])
-
-  useEffect(() => {
-    if (questions.length === 0) {
-      history.push("/")
-    }
-  }, [history, questions])
 
   const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     const questionId = e.currentTarget.name

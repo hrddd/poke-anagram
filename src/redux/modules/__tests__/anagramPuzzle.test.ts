@@ -257,7 +257,7 @@ describe('anagramPuzzle selector', () => {
         existedQLength: 0,
         isAllCorrect: false,
         resultTime: null,
-        needsInitialize: true,
+        hasQuestions: false,
         inputQuestionLength: 1,
       });
     })

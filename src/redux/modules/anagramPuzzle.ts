@@ -225,7 +225,7 @@ export const selectAnagramPuzzle = createSelector(
     existedQLength: questions.length - correctQuestions.length,
     isAllCorrect: correctQuestions.length === questions.length && questions.length !== 0,
     resultTime: getResultTime(startDate, endDate),
-    needsInitialize: questions.length === 0,
+    hasQuestions: questions.length !== 0,
     inputQuestionLength,
   })
 );

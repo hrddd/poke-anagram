@@ -6,6 +6,7 @@ import { usePokeDex } from "../../hooks/usePokeDex";
 import { useCallback } from 'react';
 import { useHistory } from "react-router-dom";
 import { LoadingModal } from "../LoadingModal";
+import { PLAY_PATH } from '../../../App';
 
 const Component: React.FC = () => {
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ const Component: React.FC = () => {
       length: inputQuestionLength
     }))
     dispatch(startTimeAttack(new Date()))
-    history.push("/anagram")
+    history.push(PLAY_PATH)
   }, [dispatch, firstPokeData, history, inputQuestionLength])
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
