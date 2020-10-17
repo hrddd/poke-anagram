@@ -1,4 +1,4 @@
-import { reducer, createQuestion, selectChar, deselectChar, swapChars, checkAnswers, selectAnagramPuzzle, startTimeAttack, finishTimeAttack, getResultTime, reset, setQuestionLength } from '../anagramPuzzle';
+import { reducer, createQuestion, selectChar, deselectChar, swapChars, checkAnswers, selectAnagramPuzzle, startTimeAttack, finishTimeAttack, getResultTime, reset, setQuestionLength, selectAnagramPuzzleRouter } from '../anagramPuzzle';
 import { configureStore } from './configureMockStore';
 
 const initialState = {
@@ -245,9 +245,10 @@ describe('anagramPuzzle reducer', () => {
     })
   })
 })
+
 describe('anagramPuzzle selector', () => {
-  describe('Props', () => {
-    it('StateからAnagramPazzle画面用のPropsを取得できる', () => {
+  describe('AnagramPazzle画面用', () => {
+    it('StateからPropsを取得できる', () => {
       const store = configureStore();
       const result = selectAnagramPuzzle(store.getState());
       expect(result).toEqual({
@@ -257,29 +258,37 @@ describe('anagramPuzzle selector', () => {
         existedQLength: 0,
         isAllCorrect: false,
         resultTime: null,
-        hasQuestions: false,
         inputQuestionLength: 1,
       });
     })
+    describe('getResultTime: タイムアタック結果(resultTime)の取得', () => {
+      const startDate = new Date('1995-12-17T03:24:00')
+      const endDate = new Date('1995-12-17T03:24:30')
+      const wrongEndDate = new Date('1995-12-17T03:23:00')
+      it('開始時刻と終了時刻から、かかった時間(ms)が算出できる', () => {
+        const resultTime = getResultTime(startDate, endDate)
+        expect(resultTime).toEqual(30000);
+      })
+      it('開始時刻より終了時刻が早ければ、エラーとなる', (done) => {
+        try {
+          getResultTime(startDate, wrongEndDate);
+        } catch {
+          done();
+        }
+      })
+      it('どちらかがnullならnullを返す', () => {
+        const resultTime = getResultTime(null, endDate)
+        expect(resultTime).toEqual(null);
+      })
+    })
   })
-  describe('getResultTime: タイムアタック結果の取得', () => {
-    const startDate = new Date('1995-12-17T03:24:00')
-    const endDate = new Date('1995-12-17T03:24:30')
-    const wrongEndDate = new Date('1995-12-17T03:23:00')
-    it('開始時刻と終了時刻から、かかった時間(ms)が算出できる', () => {
-      const resultTime = getResultTime(startDate, endDate)
-      expect(resultTime).toEqual(30000);
-    })
-    it('開始時刻より終了時刻が早ければ、エラーとなる', (done) => {
-      try {
-        getResultTime(startDate, wrongEndDate);
-      } catch {
-        done();
-      }
-    })
-    it('どちらかがnullならnullを返す', () => {
-      const resultTime = getResultTime(null, endDate)
-      expect(resultTime).toEqual(null);
+  describe('ルーティング用', () => {
+    it('StateからPropsを取得できる', () => {
+      const store = configureStore();
+      const result = selectAnagramPuzzleRouter(store.getState());
+      expect(result).toEqual({
+        hasQuestions: false,
+      });
     })
   })
 })

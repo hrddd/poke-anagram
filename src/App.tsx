@@ -9,14 +9,14 @@ import { AnagramPuzzleStartPage } from "./components/pages/AnagramPuzzleStart";
 import { AnagramPuzzleEndPage } from "./components/pages/AnagramPuzzleEnd";
 import { AnagramPuzzleMainPage } from "./components/pages/AnagramPuzzleMain";
 import { useSelector } from "react-redux";
-import { selectAnagramPuzzle } from './redux/modules/anagramPuzzle';
+import { selectAnagramPuzzleRouter } from './redux/modules/anagramPuzzle';
 
 export const START_PATH = "/";
 export const PLAY_PATH = "/play";
 export const END_PATH = "/end";
 
 const App: React.SFC = () => {
-  const { hasQuestions } = useSelector(selectAnagramPuzzle)
+  const { hasQuestions } = useSelector(selectAnagramPuzzleRouter)
 
   return (
     <Router>

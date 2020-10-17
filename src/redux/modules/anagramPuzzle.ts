@@ -225,10 +225,17 @@ export const selectAnagramPuzzle = createSelector(
     existedQLength: questions.length - correctQuestions.length,
     isAllCorrect: correctQuestions.length === questions.length && questions.length !== 0,
     resultTime: getResultTime(startDate, endDate),
-    hasQuestions: questions.length !== 0,
     inputQuestionLength,
   })
 );
 
+export const selectAnagramPuzzleRouter = createSelector(
+  (state: RootState) => state.ui.anagramPuzzle,
+  ({ questions }) => ({
+    hasQuestions: questions.length !== 0,
+  })
+);
+
 export type SelectedAnagramPuzzle = ReturnType<typeof selectAnagramPuzzle>;
+export type SelectedAnagramPuzzleRouter = ReturnType<typeof selectAnagramPuzzleRouter>;
 export type State = typeof initialState;
