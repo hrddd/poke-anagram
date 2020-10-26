@@ -67,7 +67,7 @@ const Component: React.FC = () => {
   }, [dispatch])
 
   return (
-    questions.length !== 0 &&
+    questions.length !== 0 && !isAllCorrect &&
     (<>
       <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
         <AnagramPuzzleComponent
