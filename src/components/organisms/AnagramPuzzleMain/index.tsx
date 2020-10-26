@@ -76,6 +76,8 @@ const Component: React.FC = () => {
           // 存在しないエラー。元々、全問正解時には表出しないので、分岐で逃げるが
           // そもそもcurrentQIndexでココで絞り込んでるのがよくない
           // あとContainerにもtestは必要に思う
+          // TODO: どうもタイミングによっておかしくなる。
+          // PCでは発動せず、タッチデバイスでコリコリやった時にそうなったので、reduxとdndのstoreがどうも違っちゃうからか。、、？
           questions={[questions[currentQIndex]]}
           handleClick={handleClick}
           handleDrop={handleDrop}
