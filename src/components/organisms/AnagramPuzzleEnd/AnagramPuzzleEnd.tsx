@@ -1,5 +1,6 @@
 import * as React from "react";
 import { SelectedAnagramPuzzle } from '../../../redux/modules/anagramPuzzle';
+import { Range } from "../../molecules/Range"
 
 type Props = {
   resultTime: SelectedAnagramPuzzle['resultTime'], // ミリ秒
@@ -18,15 +19,12 @@ const Component: React.SFC<Props> = (props) => {
     {resultTime && `かかった時間は ${resultTime / 1000}秒 です`}
     <br />
     <br />
-    <input
-      type="range"
-      min="1"
+    <Range
+      min={1}
       max={max}
       value={currentLength}
       onChange={handleChange}
     />
-    <br />
-    {currentLength}問に挑戦！
     <br />
     <button onClick={handleClick}>
       retry!

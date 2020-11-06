@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Range } from "../../molecules/Range"
 
 type Props = {
   max: number,
@@ -10,15 +11,12 @@ type Props = {
 const Component: React.SFC<Props> = (props) => {
   const { max, currentLength, handleChange, handleClick } = props;
   return (<>
-    <input
-      type="range"
-      min="1"
+    <Range
+      min={1}
       max={max}
       value={currentLength}
       onChange={handleChange}
     />
-    <br />
-    {currentLength}問に挑戦！
     <br />
     <button onClick={handleClick}>
       ゲームを始める
